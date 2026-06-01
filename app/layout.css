@@ -1,0 +1,10 @@
+/* Layout-specific styles */
+html {
+  scroll-behavior: smooth;
+}
+
+@supports (scroll-behavior: smooth) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
