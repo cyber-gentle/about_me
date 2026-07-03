@@ -62,8 +62,8 @@ function FloatingInput({
       <label
         htmlFor={id}
         className={`pointer-events-none absolute left-4 transition-all ${active
-            ? 'top-2 text-[10px] font-medium text-[#7FE7FF]'
-            : 'top-1/2 -translate-y-1/2 text-sm text-white/40'
+          ? 'top-2 text-[10px] font-medium text-[#7FE7FF]'
+          : 'top-1/2 -translate-y-1/2 text-sm text-white/40'
           }`}
       >
         {label}
@@ -144,7 +144,7 @@ export function Contact() {
                 <div>
                   <div className="text-xs text-white/40">Location</div>
                   <div className="text-sm font-medium text-white/90">
-                    San Francisco, CA — Remote Worldwide
+                    Lagos State, Nigeria — Remote Worldwide
                   </div>
                 </div>
               </div>

@@ -38,7 +38,7 @@ export function Footer() {
                   transition={{ duration: 0.6 }}
                 >
                   <div className="absolute inset-0 flex items-center justify-center font-display text-base font-bold text-white">
-                    AR
+                    AD
                   </div>
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"
