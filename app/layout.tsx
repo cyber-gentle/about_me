@@ -19,7 +19,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Alex Rivera — Backend Developer & Software Engineer',
+  title: 'Abraham David — Backend Developer & Software Engineer',
   description:
     'Backend Developer specializing in Go, APIs, Web Development, Performance Optimization, and Modern Cloud Applications. Building fast, scalable, and beautiful software experiences.',
   keywords: [
@@ -31,16 +31,16 @@ export const metadata: Metadata = {
     'Software Engineer',
     'Portfolio',
   ],
-  authors: [{ name: 'Alex Rivera' }],
+  authors: [{ name: ' Abraham David' }],
   openGraph: {
-    title: 'Alex Rivera — Backend Developer & Software Engineer',
+    title: 'Abraham David — Backend Developer & Software Engineer',
     description:
       'Building fast, scalable, and beautiful software experiences with Go, APIs, and modern cloud applications.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Alex Rivera — Backend Developer',
+    title: 'Abraham David — Backend Developer',
     description:
       'Building fast, scalable, and beautiful software experiences.',
   },
