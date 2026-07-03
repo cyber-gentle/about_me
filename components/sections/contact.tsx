@@ -17,10 +17,10 @@ import { Reveal } from '@/components/providers/reveal';
 import { supabase } from '@/lib/supabase';
 
 const socials = [
-  { icon: Mail, label: 'Email', value: 'alex@rivera.dev', href: 'mailto:alex@rivera.dev', color: '#4F8BFF' },
-  { icon: Github, label: 'GitHub', value: '@alexrivera', href: 'https://github.com', color: '#8A5CFF' },
-  { icon: Linkedin, label: 'LinkedIn', value: '/in/alexrivera', href: 'https://linkedin.com', color: '#7FE7FF' },
-  { icon: Twitter, label: 'Twitter', value: '@alex_rivera', href: 'https://twitter.com', color: '#4F8BFF' },
+  { icon: Mail, label: 'Email', value: 'info.abdavid@gmail.com', href: 'info.abdavid@gmail.com', color: '#4F8BFF' },
+  { icon: Github, label: 'GitHub', value: 'cyber-gentle', href: 'https://github.com/cyber-gentle', color: '#8A5CFF' },
+  { icon: Linkedin, label: 'LinkedIn', value: '/in/dev.abraham', href: 'https://linkedin.com', color: '#7FE7FF' },
+  { icon: Twitter, label: 'Twitter', value: '@dev.abraham', href: 'https://twitter.com', color: '#4F8BFF' },
 ];
 
 function FloatingInput({
@@ -61,11 +61,10 @@ function FloatingInput({
       )}
       <label
         htmlFor={id}
-        className={`pointer-events-none absolute left-4 transition-all ${
-          active
+        className={`pointer-events-none absolute left-4 transition-all ${active
             ? 'top-2 text-[10px] font-medium text-[#7FE7FF]'
             : 'top-1/2 -translate-y-1/2 text-sm text-white/40'
-        }`}
+          }`}
       >
         {label}
       </label>

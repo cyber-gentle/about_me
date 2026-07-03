@@ -45,7 +45,7 @@ export function LoadingScreen() {
               />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="font-display text-2xl font-bold text-gradient">
-                  AR
+                  AD
                 </span>
               </div>
             </motion.div>

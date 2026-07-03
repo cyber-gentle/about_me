@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Twitter, Mail, ArrowUp } from 'lucide-react';
 
 const socials = [
-  { icon: Github, href: 'https://github.com' },
+  { icon: Github, href: 'https://github.com/cyber-gentle' },
   { icon: Linkedin, href: 'https://linkedin.com' },
   { icon: Twitter, href: 'https://twitter.com' },
-  { icon: Mail, href: 'mailto:alex@rivera.dev' },
+  { icon: Mail, href: 'mailto:info.abdavid@gmail.com' },
 ];
 
 export function Footer() {
@@ -47,7 +47,7 @@ export function Footer() {
                   />
                 </motion.div>
                 <span className="font-display text-lg font-semibold text-white">
-                  Alex<span className="text-[#7FE7FF]">.</span>Rivera
+                  Abraham<span className="text-[#7FE7FF]">.</span>David
                 </span>
               </div>
             </button>
@@ -80,7 +80,7 @@ export function Footer() {
             {/* Bottom row */}
             <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-xs text-white/30">
-                © {new Date().getFullYear()} Alex Rivera. Crafted with precision.
+                © {new Date().getFullYear()}  Abraham David. Crafted with precision.
               </p>
               <button
                 onClick={scrollTop}

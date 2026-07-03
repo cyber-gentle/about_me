@@ -7,8 +7,8 @@ import { SectionHeading } from '@/components/section-heading';
 import { Reveal, StaggerContainer, StaggerItem } from '@/components/providers/reveal';
 
 const stats = [
-  { label: 'Years Learning', value: 6, suffix: '+' },
-  { label: 'Projects Built', value: 48, suffix: '' },
+  { label: 'Years Learning', value: 2, suffix: '+' },
+  { label: 'Projects Built', value: 8, suffix: '' },
   { label: 'GitHub Contributions', value: 2300, suffix: '+' },
   { label: 'Technologies', value: 24, suffix: '+' },
 ];
@@ -77,7 +77,7 @@ export function About() {
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className="font-display text-[7rem] font-bold text-white/10">
-                        AR
+                        AD
                       </span>
                     </div>
                     {/* Floating tag */}
@@ -85,7 +85,7 @@ export function About() {
                       <div className="flex items-center gap-2">
                         <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                         <span className="text-xs font-medium text-white/80">
-                          Alex Rivera
+                          Abraham David
                         </span>
                       </div>
                       <span className="font-mono text-[10px] text-white/40">

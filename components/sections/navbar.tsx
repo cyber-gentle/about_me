@@ -69,7 +69,7 @@ export function Navbar() {
           >
             <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-[#4F8BFF]/30 to-[#8A5CFF]/30">
               <div className="absolute inset-0 flex items-center justify-center font-display text-sm font-bold text-white">
-                AR
+                AD
               </div>
               <motion.div
                 className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"
@@ -78,7 +78,7 @@ export function Navbar() {
               />
             </div>
             <span className="font-display text-sm font-semibold tracking-tight text-white/90">
-              Alex<span className="text-[#7FE7FF]">.</span>Rivera
+              Abraham<span className="text-[#7FE7FF]">.</span>David
             </span>
           </button>
 
