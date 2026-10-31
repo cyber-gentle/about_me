@@ -1,10 +1,8 @@
-'use client';
-
 import { SmoothScroll } from '@/components/providers/smooth-scroll';
+import { MotionProvider } from '@/components/providers/motion-provider';
 import { CustomCursor } from '@/components/providers/custom-cursor';
 import { ScrollProgress } from '@/components/providers/scroll-progress';
 import { AuroraBackground } from '@/components/providers/aurora-background';
-import { LoadingScreen } from '@/components/providers/loading-screen';
 import { Navbar } from '@/components/sections/navbar';
 import { Hero } from '@/components/sections/hero';
 import { About } from '@/components/sections/about';
@@ -16,31 +14,39 @@ import { GitHub } from '@/components/sections/github';
 import { Testimonials } from '@/components/sections/testimonials';
 import { Contact } from '@/components/sections/contact';
 import { Footer } from '@/components/sections/footer';
+import { getContent } from '@/lib/content';
 
-export default function Home() {
+// Content comes from Supabase. Saving in /admin refreshes the page immediately
+// (on-demand revalidation); this is the fallback refresh interval.
+export const revalidate = 300;
+
+export default async function Home() {
+  const { settings, projects, skillCategories, techs, experiences } = await getContent();
+
   return (
-    <SmoothScroll>
-      <LoadingScreen />
-      <CustomCursor />
-      <ScrollProgress />
-      <div className="noise" />
-      <AuroraBackground />
+    <MotionProvider>
+      <SmoothScroll>
+        <CustomCursor />
+        <ScrollProgress />
+        <div className="noise" aria-hidden="true" />
+        <AuroraBackground />
 
-      <Navbar />
+        <Navbar />
 
-      <main className="relative z-10">
-        <Hero />
-        <About />
-        <Skills />
-        <TechStack />
-        <Projects />
-        <Experience />
-        <GitHub />
-        <Testimonials />
-        <Contact />
-      </main>
+        <main id="main" className="relative z-10">
+          <Hero settings={settings} />
+          <About settings={settings} />
+          {skillCategories.length > 0 && <Skills categories={skillCategories} />}
+          {techs.length > 0 && <TechStack techs={techs} />}
+          <Projects projects={projects} />
+          {experiences.length > 0 && <Experience experiences={experiences} />}
+          {settings.github && <GitHub username={settings.github} />}
+          <Testimonials />
+          <Contact settings={settings} />
+        </main>
 
-      <Footer />
-    </SmoothScroll>
+        <Footer settings={settings} />
+      </SmoothScroll>
+    </MotionProvider>
   );
 }

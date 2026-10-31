@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useMemo } from 'react';
+import { useInView } from 'framer-motion';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Environment } from '@react-three/drei';
 import * as THREE from 'three';
@@ -27,19 +28,8 @@ function GlassCube({
     <Float speed={speed * 1.5} rotationIntensity={0.6} floatIntensity={1.2}>
       <mesh ref={ref} position={position} scale={scale}>
         <boxGeometry args={[1, 1, 1]} />
-        <meshPhysicalMaterial
-          color={color}
-          metalness={0.2}
-          roughness={0.05}
-          transmission={0.9}
-          thickness={1.5}
-          ior={1.4}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-          transparent
-          opacity={0.6}
-        />
-        <meshStandardMaterial wireframe attach="material" color={color} transparent opacity={0.15} />
+        {/* Only one material can be attached; the wireframe is what was rendering. */}
+        <meshStandardMaterial wireframe color={color} transparent opacity={0.15} />
       </mesh>
     </Float>
   );
@@ -262,10 +252,16 @@ function CameraRig() {
 }
 
 export function HeroScene() {
+  const wrapper = useRef<HTMLDivElement>(null);
+  // Stop the render loop entirely while the hero is scrolled out of view.
+  const visible = useInView(wrapper);
+
   return (
+    <div ref={wrapper} className="h-full w-full">
     <Canvas
+      frameloop={visible ? 'always' : 'never'}
       camera={{ position: [0, 0, 6], fov: 50 }}
-      dpr={[1, 1.8]}
+      dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true }}
       style={{ background: 'transparent' }}
     >
@@ -307,5 +303,6 @@ export function HeroScene() {
       <LightBeam position={[3, 0, -3]} color="#8A5CFF" height={9} />
       <LightBeam position={[0, 0, -4]} color="#7FE7FF" height={10} />
     </Canvas>
+    </div>
   );
 }

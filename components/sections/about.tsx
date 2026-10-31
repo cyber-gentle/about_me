@@ -5,36 +5,7 @@ import { useRef } from 'react';
 import { Code2, Heart, Compass, Target } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal, StaggerContainer, StaggerItem } from '@/components/providers/reveal';
-
-const stats = [
-  { label: 'Years Learning', value: 2, suffix: '+' },
-  { label: 'Projects Built', value: 8, suffix: '' },
-  { label: 'GitHub Contributions', value: 2300, suffix: '+' },
-  { label: 'Technologies', value: 24, suffix: '+' },
-];
-
-const pillars = [
-  {
-    icon: Code2,
-    title: 'Bio',
-    text: 'I am a backend-focused software engineer who loves crafting reliable, high-performance systems. From distributed APIs to data pipelines, I turn complex problems into clean, maintainable code.',
-  },
-  {
-    icon: Heart,
-    title: 'Passion',
-    text: 'I am obsessed with performance, developer experience, and elegant architecture. Every millisecond matters, and so does every line of code that ships to production.',
-  },
-  {
-    icon: Compass,
-    title: 'Journey',
-    text: 'Started with scripting and automation, fell in love with Go and distributed systems, and have been building cloud-native applications and scalable APIs ever since.',
-  },
-  {
-    icon: Target,
-    title: 'Current Focus',
-    text: 'Deepening my expertise in observability, event-driven architecture, and edge computing — while mentoring the next generation of backend engineers.',
-  },
-];
+import type { SiteSettings } from '@/lib/content-types';
 
 function CountUp({ value, suffix }: { value: number; suffix: string }) {
   const ref = useRef(null);
@@ -47,7 +18,15 @@ function CountUp({ value, suffix }: { value: number; suffix: string }) {
   );
 }
 
-export function About() {
+export function About({ settings }: { settings: SiteSettings }) {
+  const pillars = [
+    { icon: Code2, title: 'Bio', text: settings.about_bio },
+    { icon: Heart, title: 'Passion', text: settings.about_passion },
+    { icon: Compass, title: 'Journey', text: settings.about_journey },
+    { icon: Target, title: 'Current Focus', text: settings.about_focus },
+  ].filter((p) => p.text.trim());
+  const stats = settings.stats;
+
   return (
     <section id="about" className="relative z-10 py-32">
       <div className="mx-auto max-w-6xl px-6">
@@ -88,7 +67,7 @@ export function About() {
                           Abraham David
                         </span>
                       </div>
-                      <span className="font-mono text-[10px] text-white/40">
+                      <span className="font-mono text-[10px] text-white/60">
                         Backend Engineer
                       </span>
                     </div>

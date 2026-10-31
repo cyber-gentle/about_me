@@ -2,54 +2,13 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Briefcase, GraduationCap, Rocket, Building2 } from 'lucide-react';
+import { Briefcase, GraduationCap } from 'lucide-react';
+import type { Experience as ExperienceItem } from '@/lib/content-types';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/providers/reveal';
 
-const experiences = [
-  {
-    icon: Rocket,
-    role: 'Senior Backend Engineer',
-    company: 'Nebula Cloud',
-    period: '2023 — Present',
-    description:
-      'Leading the design of distributed services handling millions of requests daily. Built the core API gateway and observability platform from the ground up in Go.',
-    tags: ['Go', 'Kubernetes', 'gRPC', 'AWS'],
-    accent: '#4F8BFF',
-  },
-  {
-    icon: Building2,
-    role: 'Backend Engineer',
-    company: 'Quantum Labs',
-    period: '2021 — 2023',
-    description:
-      'Designed and shipped event-driven microservices, real-time data pipelines, and internal developer tooling that cut deployment times by 60%.',
-    tags: ['Go', 'Kafka', 'PostgreSQL', 'Docker'],
-    accent: '#8A5CFF',
-  },
-  {
-    icon: Briefcase,
-    role: 'Software Engineer',
-    company: 'ByteForge',
-    period: '2019 — 2021',
-    description:
-      'Built REST APIs and internal dashboards. Introduced CI/CD pipelines and automated testing, improving release confidence and velocity.',
-    tags: ['Go', 'React', 'MySQL', 'CI/CD'],
-    accent: '#7FE7FF',
-  },
-  {
-    icon: GraduationCap,
-    role: 'B.Sc. Computer Science',
-    company: 'State University',
-    period: '2015 — 2019',
-    description:
-      'Focused on distributed systems, algorithms, and operating systems. Graduated with honors while building side projects and contributing to open source.',
-    tags: ['Algorithms', 'Systems', 'OS', 'C++'],
-    accent: '#4F8BFF',
-  },
-];
 
-export function Experience() {
+export function Experience({ experiences }: { experiences: ExperienceItem[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -82,9 +41,10 @@ export function Experience() {
           <div className="flex flex-col gap-12">
             {experiences.map((exp, i) => {
               const isLeft = i % 2 === 0;
+              const Icon = exp.kind === 'education' ? GraduationCap : Briefcase;
               return (
                 <div
-                  key={exp.role}
+                  key={exp.id}
                   className={`relative flex ${
                     isLeft ? 'sm:justify-start' : 'sm:justify-end'
                   }`}
@@ -104,7 +64,7 @@ export function Experience() {
                       viewport={{ once: true }}
                       transition={{ duration: 0.5 }}
                     >
-                      <exp.icon size={14} className="text-white" />
+                      <Icon size={14} className="text-white" aria-hidden="true" />
                     </motion.div>
                   </div>
 

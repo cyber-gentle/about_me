@@ -2,26 +2,14 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Mail,
-  Github,
-  Linkedin,
-  Twitter,
-  MapPin,
-  Send,
-  CheckCircle2,
-  Loader2,
-} from 'lucide-react';
+import { MapPin, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/providers/reveal';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
+import { buildSocials } from '@/lib/socials';
+import type { SiteSettings } from '@/lib/content-types';
 
-const socials = [
-  { icon: Mail, label: 'Email', value: 'info.abdavid@gmail.com', href: 'info.abdavid@gmail.com', color: '#4F8BFF' },
-  { icon: Github, label: 'GitHub', value: 'cyber-gentle', href: 'https://github.com/cyber-gentle', color: '#8A5CFF' },
-  { icon: Linkedin, label: 'LinkedIn', value: '/in/dev.abraham', href: 'https://linkedin.com', color: '#7FE7FF' },
-  { icon: Twitter, label: 'Twitter', value: '@dev.abraham', href: 'https://twitter.com', color: '#4F8BFF' },
-];
+const LIMITS = { name: 100, email: 254, message: 5000 };
 
 function FloatingInput({
   id,
@@ -30,6 +18,8 @@ function FloatingInput({
   value,
   onChange,
   textarea,
+  maxLength,
+  autoComplete,
 }: {
   id: string;
   label: string;
@@ -37,12 +27,18 @@ function FloatingInput({
   value: string;
   onChange: (v: string) => void;
   textarea?: boolean;
+  maxLength: number;
+  autoComplete?: string;
 }) {
   const [focused, setFocused] = useState(false);
   const active = focused || value.length > 0;
 
   const shared = {
     id,
+    name: id,
+    required: true,
+    maxLength,
+    autoComplete,
     value,
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       onChange(e.target.value),
@@ -63,7 +59,9 @@ function FloatingInput({
         htmlFor={id}
         className={`pointer-events-none absolute left-4 transition-all ${active
           ? 'top-2 text-[10px] font-medium text-[#7FE7FF]'
-          : 'top-1/2 -translate-y-1/2 text-sm text-white/40'
+          : textarea
+            ? 'top-4 text-sm text-white/60'
+            : 'top-1/2 -translate-y-1/2 text-sm text-white/60'
           }`}
       >
         {label}
@@ -72,28 +70,47 @@ function FloatingInput({
   );
 }
 
-export function Contact() {
+export function Contact({ settings }: { settings: SiteSettings }) {
+  const socials = buildSocials(settings);
+  const email = settings.email;
   const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const fail = (msg: string) => {
+    setErrorMsg(msg);
+    setStatus('error');
+    setTimeout(() => setStatus('idle'), 6000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) return;
-    setStatus('sending');
-    try {
-      const { error } = await supabase.from('messages').insert({
-        name: form.name,
-        email: form.email,
-        message: form.message,
-      });
-      if (error) throw error;
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const message = form.message.trim();
+    if (!name || !email || !message) return fail('Please fill in all three fields.');
+
+    // Bots fill hidden fields; pretend success and drop the submission.
+    if (honeypot) {
       setStatus('sent');
-      setForm({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 4000);
-    } catch {
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 4000);
+      return;
     }
+
+    const supabase = getSupabase();
+    if (!supabase) {
+      return fail(`The form is offline right now — please email me at ${email}.`);
+    }
+
+    setStatus('sending');
+    setErrorMsg('');
+    const { error } = await supabase.from('messages').insert({ name, email, message });
+    if (error) {
+      return fail(`Something went wrong sending your message. You can email me directly at ${email}.`);
+    }
+    setStatus('sent');
+    setForm({ name: '', email: '', message: '' });
+    setTimeout(() => setStatus('idle'), 5000);
   };
 
   return (
@@ -128,7 +145,7 @@ export function Contact() {
                     <s.icon size={20} style={{ color: s.color }} />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs text-white/40">{s.label}</div>
+                    <div className="text-xs text-white/60">{s.label}</div>
                     <div className="text-sm font-medium text-white/90">
                       {s.value}
                     </div>
@@ -142,9 +159,9 @@ export function Contact() {
                   <MapPin size={20} className="text-[#7FE7FF]" />
                 </div>
                 <div>
-                  <div className="text-xs text-white/40">Location</div>
+                  <div className="text-xs text-white/60">Location</div>
                   <div className="text-sm font-medium text-white/90">
-                    Lagos State, Nigeria — Remote Worldwide
+                    {settings.location}
                   </div>
                 </div>
               </div>
@@ -155,6 +172,7 @@ export function Contact() {
           <Reveal delay={0.1}>
             <form
               onSubmit={handleSubmit}
+              aria-label="Contact form"
               className="relative overflow-hidden rounded-3xl glass-card p-6 sm:p-8"
             >
               {/* Glow accent */}
@@ -167,10 +185,24 @@ export function Contact() {
               />
 
               <div className="relative flex flex-col gap-4">
+                {/* Honeypot: hidden from people, tempting to bots */}
+                <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+                  <label htmlFor="company">Company</label>
+                  <input
+                    id="company"
+                    name="company"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <FloatingInput
                     id="name"
                     label="Your Name"
+                    maxLength={LIMITS.name}
+                    autoComplete="name"
                     value={form.name}
                     onChange={(v) => setForm((f) => ({ ...f, name: v }))}
                   />
@@ -178,6 +210,8 @@ export function Contact() {
                     id="email"
                     label="Your Email"
                     type="email"
+                    maxLength={LIMITS.email}
+                    autoComplete="email"
                     value={form.email}
                     onChange={(v) => setForm((f) => ({ ...f, email: v }))}
                   />
@@ -185,6 +219,7 @@ export function Contact() {
                 <FloatingInput
                   id="message"
                   label="Your Message"
+                  maxLength={LIMITS.message}
                   value={form.message}
                   onChange={(v) => setForm((f) => ({ ...f, message: v }))}
                   textarea
@@ -257,6 +292,13 @@ export function Contact() {
                     transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
                   />
                 </motion.button>
+
+                <p role="status" aria-live="polite" className="min-h-[1.25rem] text-sm">
+                  {status === 'error' && <span className="text-red-300">{errorMsg}</span>}
+                  {status === 'sent' && (
+                    <span className="text-emerald-300">Thanks — I&apos;ll get back to you soon.</span>
+                  )}
+                </p>
               </div>
             </form>
           </Reveal>

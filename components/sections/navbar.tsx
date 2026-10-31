@@ -5,15 +5,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { LiveClock } from '@/components/live-clock';
 import { cn } from '@/lib/utils';
+import { handleAnchorClick } from '@/components/providers/smooth-scroll';
 
 const links = [
-  { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
   { label: 'Skills', href: '#skills' },
   { label: 'Projects', href: '#projects' },
   { label: 'Experience', href: '#experience' },
+  { label: 'GitHub', href: '#github' },
+  { label: 'Testimonials', href: '#testimonials' },
   { label: 'Contact', href: '#contact' },
 ];
+
+const sectionIds = ['home', ...links.map((l) => l.href.slice(1))];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -23,8 +27,7 @@ export function Navbar() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
-      const sections = links.map((l) => l.href.slice(1));
-      for (const id of sections) {
+      for (const id of sectionIds) {
         const el = document.getElementById(id);
         if (!el) continue;
         const rect = el.getBoundingClientRect();
@@ -39,15 +42,21 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const go = (href: string) => {
+  const onLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
     setOpen(false);
-    const el = document.querySelector(href);
-    el?.scrollIntoView({ behavior: 'smooth' });
+    handleAnchorClick(e);
   };
 
   return (
     <>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[10002] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-black"
+      >
+        Skip to content
+      </a>
       <motion.nav
+        aria-label="Primary"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -62,8 +71,10 @@ export function Navbar() {
           )}
         >
           {/* Logo */}
-          <button
-            onClick={() => go('#home')}
+          <a
+            href="#home"
+            onClick={onLink}
+            aria-label="Abraham David — back to top"
             className="group flex items-center gap-2.5"
             data-cursor="hover"
           >
@@ -80,20 +91,22 @@ export function Navbar() {
             <span className="font-display text-sm font-semibold tracking-tight text-white/90">
               Abraham<span className="text-[#7FE7FF]">.</span>David
             </span>
-          </button>
+          </a>
 
           {/* Desktop links */}
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden items-center gap-0.5 lg:flex">
             {links.map((link) => (
-              <button
+              <a
                 key={link.href}
-                onClick={() => go(link.href)}
+                href={link.href}
+                onClick={onLink}
+                aria-current={active === link.href ? 'location' : undefined}
                 data-cursor="hover"
                 className={cn(
-                  'relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors',
+                  'relative rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   active === link.href
                     ? 'text-white'
-                    : 'text-white/50 hover:text-white/90'
+                    : 'text-white/60 hover:text-white/90'
                 )}
               >
                 {link.label}
@@ -108,15 +121,18 @@ export function Navbar() {
                     transition={{ type: 'spring', damping: 22, stiffness: 280 }}
                   />
                 )}
-              </button>
+              </a>
             ))}
           </div>
 
           {/* Right side */}
-          <div className="hidden items-center gap-4 md:flex">
-            <LiveClock />
-            <button
-              onClick={() => go('#contact')}
+          <div className="hidden items-center gap-4 lg:flex">
+            <div className="hidden xl:block">
+              <LiveClock />
+            </div>
+            <a
+              href="#contact"
+              onClick={onLink}
               data-cursor="hover"
               className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all hover:border-white/20"
             >
@@ -128,14 +144,16 @@ export function Navbar() {
                 transition={{ duration: 0.3 }}
                 style={{ transformOrigin: 'left' }}
               />
-            </button>
+            </a>
           </div>
 
           {/* Mobile toggle */}
           <button
             onClick={() => setOpen((v) => !v)}
-            className="rounded-lg p-2 text-white/70 md:hidden"
-            aria-label="Toggle menu"
+            className="rounded-lg p-2 text-white/70 lg:hidden"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -146,16 +164,19 @@ export function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed left-1/2 top-20 z-[9990] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 md:hidden"
+            className="fixed left-1/2 top-20 z-[9990] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 lg:hidden"
           >
             <div className="glass-strong flex flex-col gap-1 rounded-2xl p-3">
               {links.map((link) => (
-                <button
+                <a
                   key={link.href}
-                  onClick={() => go(link.href)}
+                  href={link.href}
+                  onClick={onLink}
+                  aria-current={active === link.href ? 'location' : undefined}
                   className={cn(
                     'rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors',
                     active === link.href
@@ -164,7 +185,7 @@ export function Navbar() {
                   )}
                 >
                   {link.label}
-                </button>
+                </a>
               ))}
             </div>
           </motion.div>

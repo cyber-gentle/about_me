@@ -1,18 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Twitter, Mail, ArrowUp } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
+import { site } from '@/lib/site';
+import { buildSocials } from '@/lib/socials';
+import type { SiteSettings } from '@/lib/content-types';
+import { scrollToHash } from '@/components/providers/smooth-scroll';
 
-const socials = [
-  { icon: Github, href: 'https://github.com/cyber-gentle' },
-  { icon: Linkedin, href: 'https://linkedin.com' },
-  { icon: Twitter, href: 'https://twitter.com' },
-  { icon: Mail, href: 'mailto:info.abdavid@gmail.com' },
-];
-
-export function Footer() {
-  const scrollTop = () =>
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+export function Footer({ settings }: { settings: SiteSettings }) {
+  const socials = buildSocials(settings);
+  const scrollTop = () => scrollToHash('#home');
 
   return (
     <footer className="relative z-10 px-6 pb-10 pt-20">
@@ -30,7 +27,7 @@ export function Footer() {
 
           <div className="flex flex-col items-center gap-8 text-center">
             {/* Animated logo */}
-            <button onClick={scrollTop} data-cursor="hover" className="group">
+            <button onClick={scrollTop} data-cursor="hover" className="group" aria-label="Back to top">
               <div className="relative flex items-center gap-3">
                 <motion.div
                   className="relative h-12 w-12 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-[#4F8BFF]/30 to-[#8A5CFF]/30"
@@ -53,17 +50,18 @@ export function Footer() {
             </button>
 
             {/* Tagline */}
-            <p className="max-w-md text-sm leading-relaxed text-white/40">
+            <p className="max-w-md text-sm leading-relaxed text-white/60">
               Building fast, scalable, and beautiful software experiences.
               Let&apos;s create something extraordinary together.
             </p>
 
             {/* Social icons */}
             <div className="flex items-center gap-3">
-              {socials.map((s, i) => (
+              {socials.map((s) => (
                 <a
-                  key={i}
+                  key={s.label}
                   href={s.href}
+                  aria-label={s.label}
                   target={s.href.startsWith('http') ? '_blank' : undefined}
                   rel="noopener noreferrer"
                   data-cursor="hover"
@@ -79,13 +77,13 @@ export function Footer() {
 
             {/* Bottom row */}
             <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
-              <p className="text-xs text-white/30">
-                © {new Date().getFullYear()}  Abraham David. Crafted with precision.
+              <p className="text-xs text-white/50">
+                © {new Date().getFullYear()} {site.name}. Crafted with precision.
               </p>
               <button
                 onClick={scrollTop}
                 data-cursor="hover"
-                className="group flex items-center gap-2 text-xs text-white/40 transition-colors hover:text-white/80"
+                className="group flex items-center gap-2 text-xs text-white/60 transition-colors hover:text-white/80"
               >
                 Back to top
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all group-hover:border-white/25 group-hover:bg-white/10">

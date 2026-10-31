@@ -2,80 +2,15 @@
 
 import { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useInView } from 'framer-motion';
-import { Server, Layout, Database, Cloud, Wrench, Code } from 'lucide-react';
+import { Code } from 'lucide-react';
+import type { SkillCategory } from '@/lib/content-types';
+import { skillIcons } from '@/lib/skill-icons';
 import { SectionHeading } from '@/components/section-heading';
 import { StaggerContainer, StaggerItem } from '@/components/providers/reveal';
 
-const categories = [
-  {
-    icon: Server,
-    name: 'Backend',
-    color: '#4F8BFF',
-    skills: [
-      { name: 'Go (Golang)', level: 95 },
-      { name: 'REST APIs', level: 92 },
-      { name: 'gRPC', level: 85 },
-      { name: 'Microservices', level: 88 },
-    ],
-  },
-  {
-    icon: Layout,
-    name: 'Frontend',
-    color: '#8A5CFF',
-    skills: [
-      { name: 'React / Next.js', level: 84 },
-      { name: 'TypeScript', level: 86 },
-      { name: 'Tailwind CSS', level: 90 },
-      { name: 'Framer Motion', level: 78 },
-    ],
-  },
-  {
-    icon: Database,
-    name: 'Databases',
-    color: '#7FE7FF',
-    skills: [
-      { name: 'PostgreSQL', level: 90 },
-      { name: 'MySQL', level: 88 },
-      { name: 'Redis', level: 82 },
-      { name: 'MongoDB', level: 75 },
-    ],
-  },
-  {
-    icon: Cloud,
-    name: 'Cloud',
-    color: '#4F8BFF',
-    skills: [
-      { name: 'Docker', level: 90 },
-      { name: 'Kubernetes', level: 78 },
-      { name: 'AWS', level: 82 },
-      { name: 'CI/CD', level: 85 },
-    ],
-  },
-  {
-    icon: Wrench,
-    name: 'Tools',
-    color: '#8A5CFF',
-    skills: [
-      { name: 'Git / GitHub', level: 94 },
-      { name: 'Linux', level: 88 },
-      { name: 'VS Code', level: 92 },
-      { name: 'Postman', level: 90 },
-    ],
-  },
-  {
-    icon: Code,
-    name: 'Languages',
-    color: '#7FE7FF',
-    skills: [
-      { name: 'Go', level: 95 },
-      { name: 'TypeScript', level: 86 },
-      { name: 'JavaScript', level: 88 },
-      { name: 'Python', level: 78 },
-    ],
-  },
-];
 
-function TiltCard({ category }: { category: (typeof categories)[number] }) {
+function TiltCard({ category }: { category: SkillCategory }) {
+  const Icon = skillIcons[category.icon] ?? Code;
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-50px' });
   const [hovered, setHovered] = useState(false);
@@ -130,7 +65,7 @@ function TiltCard({ category }: { category: (typeof categories)[number] }) {
               boxShadow: hovered ? `0 0 24px ${category.color}50` : 'none',
             }}
           >
-            <category.icon size={20} style={{ color: category.color }} />
+            <Icon size={20} aria-hidden="true" style={{ color: category.color }} />
           </div>
           <h3 className="font-display text-lg font-semibold text-white">
             {category.name}
@@ -139,10 +74,10 @@ function TiltCard({ category }: { category: (typeof categories)[number] }) {
         {/* Skills */}
         <div className="relative flex flex-col gap-4">
           {category.skills.map((skill, i) => (
-            <div key={skill.name}>
+            <div key={skill.id}>
               <div className="mb-1.5 flex items-center justify-between text-xs">
                 <span className="font-medium text-white/70">{skill.name}</span>
-                <span className="font-mono text-white/40">{skill.level}%</span>
+                <span className="font-mono text-white/60">{skill.level}%</span>
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
                 <motion.div
@@ -164,7 +99,7 @@ function TiltCard({ category }: { category: (typeof categories)[number] }) {
   );
 }
 
-export function Skills() {
+export function Skills({ categories }: { categories: SkillCategory[] }) {
   return (
     <section id="skills" className="relative z-10 py-32">
       <div className="mx-auto max-w-6xl px-6">
@@ -176,7 +111,7 @@ export function Skills() {
 
         <StaggerContainer className="mt-20 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((cat) => (
-            <TiltCard key={cat.name} category={cat} />
+            <TiltCard key={cat.id} category={cat} />
           ))}
         </StaggerContainer>
       </div>

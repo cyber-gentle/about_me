@@ -4,27 +4,12 @@ import { useRef, useState, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/providers/reveal';
+import type { Tech } from '@/lib/content-types';
 
-const techs = [
-  { name: 'Go', short: 'Go' },
-  { name: 'JavaScript', short: 'JS' },
-  { name: 'TypeScript', short: 'TS' },
-  { name: 'HTML', short: 'HTML' },
-  { name: 'CSS', short: 'CSS' },
-  { name: 'Git', short: 'Git' },
-  { name: 'GitHub', short: 'GH' },
-  { name: 'Docker', short: 'Dkr' },
-  { name: 'Linux', short: 'Linux' },
-  { name: 'MySQL', short: 'SQL' },
-  { name: 'PostgreSQL', short: 'PG' },
-  { name: 'REST API', short: 'API' },
-  { name: 'JSON', short: 'JSON' },
-  { name: 'VS Code', short: 'VS' },
-];
 
 const colors = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
 
-export function TechStack() {
+export function TechStack({ techs }: { techs: Tech[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
   const [hovered, setHovered] = useState<number | null>(null);
@@ -33,6 +18,7 @@ export function TechStack() {
   const positions = useMemo(() => {
     const n = techs.length;
     const radius = 180;
+    if (n === 1) return [{ x: 0, y: 0, z: radius }];
     const pts: { x: number; y: number; z: number }[] = [];
     const golden = Math.PI * (3 - Math.sqrt(5));
     for (let i = 0; i < n; i++) {
@@ -46,7 +32,7 @@ export function TechStack() {
       });
     }
     return pts;
-  }, []);
+  }, [techs.length]);
 
   return (
     <section id="techstack" className="relative z-10 py-32">
@@ -101,7 +87,7 @@ export function TechStack() {
                   const color = colors[i % colors.length];
                   return (
                     <div
-                      key={tech.name}
+                      key={tech.id}
                       className="absolute left-1/2 top-1/2"
                       style={{
                         transform: `translate3d(${p.x}px, ${p.y}px, ${p.z}px)`,
@@ -135,10 +121,10 @@ export function TechStack() {
               {/* Center label */}
               <div className="pointer-events-none absolute z-10 text-center">
                 <div className="font-display text-2xl font-bold text-gradient">
-                  {hovered !== null ? techs[hovered].name : 'My Stack'}
+                  {hovered !== null && techs[hovered] ? techs[hovered].name : 'My Stack'}
                 </div>
-                <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-white/30">
-                  {hovered !== null ? 'Hover to explore' : '14 technologies'}
+                <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-white/60">
+                  {hovered !== null ? 'Hover to explore' : `${techs.length} technologies`}
                 </div>
               </div>
             </div>
@@ -158,7 +144,7 @@ export function TechStack() {
               <div className="flex flex-wrap gap-2">
                 {techs.map((tech, i) => (
                   <motion.span
-                    key={tech.name}
+                    key={tech.id}
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
