@@ -2,7 +2,7 @@
 
 Personal portfolio of **Abraham David**, backend developer (Go, APIs, cloud).
 
-**Stack:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · Framer Motion · React Three Fiber · Supabase · Netlify
+**Stack:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · Framer Motion · React Three Fiber · Supabase · Vercel
 
 ## Features
 
@@ -74,4 +74,4 @@ Messages land in the `messages` table. To get an email for each new one, add a D
 
 ## Deployment
 
-Deployed on Netlify with `@netlify/plugin-nextjs` (see `netlify.toml`). Set the environment variables above in the Netlify dashboard.
+Deployed on **Vercel**. Import the repo (the framework preset is detected automatically), then add the environment variables above under *Project → Settings → Environment Variables*. Set `NEXT_PUBLIC_SITE_URL` to your production domain, e.g. `https://yourname.vercel.app`.
