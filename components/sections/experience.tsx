@@ -1,55 +1,35 @@
 'use client';
 
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Briefcase, GraduationCap, Rocket, Building2 } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/providers/reveal';
+import { useContent } from '@/components/providers/content-provider';
 
-const experiences = [
-  {
-    icon: Rocket,
-    role: 'Senior Backend Engineer',
-    company: 'Nebula Cloud',
-    period: '2023 — Present',
-    description:
-      'Leading the design of distributed services handling millions of requests daily. Built the core API gateway and observability platform from the ground up in Go.',
-    tags: ['Go', 'Kubernetes', 'gRPC', 'AWS'],
-    accent: '#4F8BFF',
-  },
-  {
-    icon: Building2,
-    role: 'Backend Engineer',
-    company: 'Quantum Labs',
-    period: '2021 — 2023',
-    description:
-      'Designed and shipped event-driven microservices, real-time data pipelines, and internal developer tooling that cut deployment times by 60%.',
-    tags: ['Go', 'Kafka', 'PostgreSQL', 'Docker'],
-    accent: '#8A5CFF',
-  },
-  {
-    icon: Briefcase,
-    role: 'Software Engineer',
-    company: 'ByteForge',
-    period: '2019 — 2021',
-    description:
-      'Built REST APIs and internal dashboards. Introduced CI/CD pipelines and automated testing, improving release confidence and velocity.',
-    tags: ['Go', 'React', 'MySQL', 'CI/CD'],
-    accent: '#7FE7FF',
-  },
-  {
-    icon: GraduationCap,
-    role: 'B.Sc. Computer Science',
-    company: 'State University',
-    period: '2015 — 2019',
-    description:
-      'Focused on distributed systems, algorithms, and operating systems. Graduated with honors while building side projects and contributing to open source.',
-    tags: ['Algorithms', 'Systems', 'OS', 'C++'],
-    accent: '#4F8BFF',
-  },
-];
+const ACCENTS = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
+const WORK_ICONS = [Rocket, Building2, Briefcase];
 
 export function Experience() {
+  const { experience: rows } = useContent();
+
+  const experiences = useMemo(() => {
+    let workIdx = 0;
+    return rows.map((row) => ({
+      id: row.id,
+      role: row.role,
+      company: row.company,
+      period: row.period,
+      description: row.description,
+      tags: row.tags,
+      accent: ACCENTS[row.sort_order % ACCENTS.length],
+      icon:
+        row.entry_type === 'education'
+          ? GraduationCap
+          : WORK_ICONS[workIdx++ % WORK_ICONS.length],
+    }));
+  }, [rows]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -84,7 +64,7 @@ export function Experience() {
               const isLeft = i % 2 === 0;
               return (
                 <div
-                  key={exp.role}
+                  key={exp.id}
                   className={`relative flex ${
                     isLeft ? 'sm:justify-start' : 'sm:justify-end'
                   }`}

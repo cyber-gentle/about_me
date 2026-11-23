@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { ContentProvider } from '@/components/providers/content-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -44,12 +45,11 @@ export const metadata: Metadata = {
     description:
       'Building fast, scalable, and beautiful software experiences.',
   },
-};
-
-export const viewport = {
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+  },
   themeColor: '#050505',
-  width: 'device-width',
-  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -62,7 +62,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrains.variable} font-sans antialiased`}
       >
-        {children}
+        <ContentProvider>{children}</ContentProvider>
       </body>
     </html>
   );

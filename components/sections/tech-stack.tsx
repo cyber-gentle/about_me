@@ -4,27 +4,12 @@ import { useRef, useState, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/providers/reveal';
-
-const techs = [
-  { name: 'Go', short: 'Go' },
-  { name: 'JavaScript', short: 'JS' },
-  { name: 'TypeScript', short: 'TS' },
-  { name: 'HTML', short: 'HTML' },
-  { name: 'CSS', short: 'CSS' },
-  { name: 'Git', short: 'Git' },
-  { name: 'GitHub', short: 'GH' },
-  { name: 'Docker', short: 'Dkr' },
-  { name: 'Linux', short: 'Linux' },
-  { name: 'MySQL', short: 'SQL' },
-  { name: 'PostgreSQL', short: 'PG' },
-  { name: 'REST API', short: 'API' },
-  { name: 'JSON', short: 'JSON' },
-  { name: 'VS Code', short: 'VS' },
-];
+import { useContent } from '@/components/providers/content-provider';
 
 const colors = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
 
 export function TechStack() {
+  const { techs } = useContent();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
   const [hovered, setHovered] = useState<number | null>(null);
@@ -46,7 +31,7 @@ export function TechStack() {
       });
     }
     return pts;
-  }, []);
+  }, [techs]);
 
   return (
     <section id="techstack" className="relative z-10 py-32">
@@ -138,7 +123,7 @@ export function TechStack() {
                   {hovered !== null ? techs[hovered].name : 'My Stack'}
                 </div>
                 <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-white/30">
-                  {hovered !== null ? 'Hover to explore' : '14 technologies'}
+                  {hovered !== null ? 'Hover to explore' : `${techs.length} technologies`}
                 </div>
               </div>
             </div>

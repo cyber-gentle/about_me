@@ -1,56 +1,43 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
+import { useContent } from '@/components/providers/content-provider';
 
-const testimonials = [
-  {
-    quote:
-      'Abraham is the kind of engineer every team wants. He shipped our API gateway in record time and it has been rock solid ever since. His attention to performance and clean architecture is unmatched.',
-    name: 'Sarah Chen',
-    role: 'VP Engineering, Nebula Cloud',
-    initials: 'SC',
-    color: '#4F8BFF',
-  },
-  {
-    quote:
-      'Working with Abraham was a turning point for our platform. He redesigned our event pipeline to handle 10x the load without breaking a sweat. A true systems thinker.',
-    name: 'Marcus Reid',
-    role: 'CTO, Quantum Labs',
-    initials: 'MR',
-    color: '#8A5CFF',
-  },
-  {
-    quote:
-      'Rarely do you find an engineer who cares as deeply about developer experience as Abraham does. The tooling he built saved our team hours every single week.',
-    name: 'Priya Nair',
-    role: 'Staff Engineer, ByteForge',
-    initials: 'PN',
-    color: '#7FE7FF',
-  },
-  {
-    quote:
-      'Abraham mentored me through my first production Go service. Patient, precise, and genuinely invested in helping others level up. A phenomenal engineer and teammate.',
-    name: 'David Park',
-    role: 'Backend Engineer, Nebula Cloud',
-    initials: 'DP',
-    color: '#4F8BFF',
-  },
-];
+const COLORS = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
+
+const initialsOf = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('');
 
 export function Testimonials() {
+  const { testimonials: rows } = useContent();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
+  const testimonials = useMemo(
+    () =>
+      rows.map((t, i) => ({
+        ...t,
+        initials: initialsOf(t.name),
+        color: COLORS[i % COLORS.length],
+      })),
+    [rows]
+  );
+
   useEffect(() => {
-    if (paused) return;
+    if (paused || testimonials.length === 0) return;
     const id = setInterval(() => {
       setIndex((i) => (i + 1) % testimonials.length);
     }, 6000);
     return () => clearInterval(id);
-  }, [paused]);
+  }, [paused, testimonials.length]);
 
   const next = () => setIndex((i) => (i + 1) % testimonials.length);
   const prev = () => setIndex((i) => (i - 1 + testimonials.length) % testimonials.length);

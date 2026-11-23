@@ -82,16 +82,25 @@ export function Footer() {
               <p className="text-xs text-white/30">
                 © {new Date().getFullYear()}  Abraham David. Crafted with precision.
               </p>
-              <button
-                onClick={scrollTop}
-                data-cursor="hover"
-                className="group flex items-center gap-2 text-xs text-white/40 transition-colors hover:text-white/80"
-              >
-                Back to top
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all group-hover:border-white/25 group-hover:bg-white/10">
-                  <ArrowUp size={13} />
-                </span>
-              </button>
+              <div className="flex items-center gap-4">
+                <a
+                  href="/admin"
+                  data-cursor="hover"
+                  className="text-xs text-white/30 transition-colors hover:text-white/80"
+                >
+                  Admin
+                </a>
+                <button
+                  onClick={scrollTop}
+                  data-cursor="hover"
+                  className="group flex items-center gap-2 text-xs text-white/40 transition-colors hover:text-white/80"
+                >
+                  Back to top
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all group-hover:border-white/25 group-hover:bg-white/10">
+                    <ArrowUp size={13} />
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

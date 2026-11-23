@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail,
@@ -14,14 +14,17 @@ import {
 } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/providers/reveal';
+import { useContent } from '@/components/providers/content-provider';
 import { supabase } from '@/lib/supabase';
 
-const socials = [
-  { icon: Mail, label: 'Email', value: 'info.abdavid@gmail.com', href: 'info.abdavid@gmail.com', color: '#4F8BFF' },
-  { icon: Github, label: 'GitHub', value: 'cyber-gentle', href: 'https://github.com/cyber-gentle', color: '#8A5CFF' },
-  { icon: Linkedin, label: 'LinkedIn', value: '/in/dev.abraham', href: 'https://linkedin.com', color: '#7FE7FF' },
-  { icon: Twitter, label: 'Twitter', value: '@dev.abraham', href: 'https://twitter.com', color: '#4F8BFF' },
-];
+const ICONS: Record<string, typeof Mail> = {
+  mail: Mail,
+  github: Github,
+  linkedin: Linkedin,
+  twitter: Twitter,
+};
+
+const COLORS = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
 
 function FloatingInput({
   id,
@@ -73,8 +76,19 @@ function FloatingInput({
 }
 
 export function Contact() {
+  const { contactLinks: linkRows, settings } = useContent();
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const socials = useMemo(
+    () =>
+      linkRows.map((l, i) => ({
+        ...l,
+        icon: ICONS[l.icon] ?? Mail,
+        color: COLORS[i % COLORS.length],
+      })),
+    [linkRows]
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,7 +125,7 @@ export function Contact() {
             <div className="flex h-full flex-col gap-4">
               {socials.map((s) => (
                 <a
-                  key={s.label}
+                  key={s.id}
                   href={s.href}
                   target={s.href.startsWith('http') ? '_blank' : undefined}
                   rel="noopener noreferrer"
@@ -144,7 +158,7 @@ export function Contact() {
                 <div>
                   <div className="text-xs text-white/40">Location</div>
                   <div className="text-sm font-medium text-white/90">
-                    Lagos State, Nigeria — Remote Worldwide
+                    {settings.location}
                   </div>
                 </div>
               </div>

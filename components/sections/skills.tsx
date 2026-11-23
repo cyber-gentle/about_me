@@ -1,81 +1,31 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useInView } from 'framer-motion';
 import { Server, Layout, Database, Cloud, Wrench, Code } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { StaggerContainer, StaggerItem } from '@/components/providers/reveal';
+import { useContent } from '@/components/providers/content-provider';
 
-const categories = [
-  {
-    icon: Server,
-    name: 'Backend',
-    color: '#4F8BFF',
-    skills: [
-      { name: 'Go (Golang)', level: 95 },
-      { name: 'REST APIs', level: 92 },
-      { name: 'gRPC', level: 85 },
-      { name: 'Microservices', level: 88 },
-    ],
-  },
-  {
-    icon: Layout,
-    name: 'Frontend',
-    color: '#8A5CFF',
-    skills: [
-      { name: 'React / Next.js', level: 84 },
-      { name: 'TypeScript', level: 86 },
-      { name: 'Tailwind CSS', level: 90 },
-      { name: 'Framer Motion', level: 78 },
-    ],
-  },
-  {
-    icon: Database,
-    name: 'Databases',
-    color: '#7FE7FF',
-    skills: [
-      { name: 'PostgreSQL', level: 90 },
-      { name: 'MySQL', level: 88 },
-      { name: 'Redis', level: 82 },
-      { name: 'MongoDB', level: 75 },
-    ],
-  },
-  {
-    icon: Cloud,
-    name: 'Cloud',
-    color: '#4F8BFF',
-    skills: [
-      { name: 'Docker', level: 90 },
-      { name: 'Kubernetes', level: 78 },
-      { name: 'AWS', level: 82 },
-      { name: 'CI/CD', level: 85 },
-    ],
-  },
-  {
-    icon: Wrench,
-    name: 'Tools',
-    color: '#8A5CFF',
-    skills: [
-      { name: 'Git / GitHub', level: 94 },
-      { name: 'Linux', level: 88 },
-      { name: 'VS Code', level: 92 },
-      { name: 'Postman', level: 90 },
-    ],
-  },
-  {
-    icon: Code,
-    name: 'Languages',
-    color: '#7FE7FF',
-    skills: [
-      { name: 'Go', level: 95 },
-      { name: 'TypeScript', level: 86 },
-      { name: 'JavaScript', level: 88 },
-      { name: 'Python', level: 78 },
-    ],
-  },
-];
+type Category = {
+  icon: typeof Server;
+  name: string;
+  color: string;
+  skills: { name: string; level: number }[];
+};
 
-function TiltCard({ category }: { category: (typeof categories)[number] }) {
+const CATEGORY_ICONS: Record<string, typeof Server> = {
+  Backend: Server,
+  Frontend: Layout,
+  Databases: Database,
+  Cloud: Cloud,
+  Tools: Wrench,
+  Languages: Code,
+};
+
+const CATEGORY_COLORS = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
+
+function TiltCard({ category }: { category: Category }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-50px' });
   const [hovered, setHovered] = useState(false);
@@ -165,6 +115,28 @@ function TiltCard({ category }: { category: (typeof categories)[number] }) {
 }
 
 export function Skills() {
+  const { skills } = useContent();
+
+  const categories = useMemo<Category[]>(() => {
+    const grouped: Category[] = [];
+    const byName = new Map<string, Category>();
+    skills.forEach((row) => {
+      let cat = byName.get(row.category);
+      if (!cat) {
+        cat = {
+          icon: CATEGORY_ICONS[row.category] ?? Code,
+          name: row.category,
+          color: CATEGORY_COLORS[grouped.length % CATEGORY_COLORS.length],
+          skills: [],
+        };
+        byName.set(row.category, cat);
+        grouped.push(cat);
+      }
+      cat.skills.push({ name: row.name, level: row.level });
+    });
+    return grouped;
+  }, [skills]);
+
   return (
     <section id="skills" className="relative z-10 py-32">
       <div className="mx-auto max-w-6xl px-6">

@@ -5,55 +5,10 @@ import { motion } from 'framer-motion';
 import { Github, GitFork, Star, Users, BookOpen } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal, StaggerContainer, StaggerItem } from '@/components/providers/reveal';
+import { useContent } from '@/components/providers/content-provider';
 
-const repos = [
-  {
-    name: 'go-api-gateway',
-    description: 'High-throughput API gateway with rate limiting and circuit breaking.',
-    language: 'Go',
-    stars: 342,
-    forks: 48,
-    color: '#4F8BFF',
-  },
-  {
-    name: 'event-pipeline',
-    description: 'Stream processing pipeline for millions of daily events.',
-    language: 'Go',
-    stars: 218,
-    forks: 31,
-    color: '#8A5CFF',
-  },
-  {
-    name: 'task-queue',
-    description: 'Reliable background job system with retries and priorities.',
-    language: 'Go',
-    stars: 187,
-    forks: 24,
-    color: '#7FE7FF',
-  },
-  {
-    name: 'otel-toolkit',
-    description: 'One-line OpenTelemetry instrumentation for Go services.',
-    language: 'Go',
-    stars: 264,
-    forks: 39,
-    color: '#4F8BFF',
-  },
-];
-
-const stats = [
-  { icon: BookOpen, label: 'Repositories', value: '64' },
-  { icon: Star, label: 'Total Stars', value: '1.2k' },
-  { icon: GitFork, label: 'Total Forks', value: '186' },
-  { icon: Users, label: 'Followers', value: '540' },
-];
-
-const languageStats = [
-  { name: 'Go', pct: 62, color: '#4F8BFF' },
-  { name: 'TypeScript', pct: 18, color: '#8A5CFF' },
-  { name: 'Python', pct: 9, color: '#7FE7FF' },
-  { name: 'Other', pct: 11, color: '#888' },
-];
+const REPO_COLORS = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
+const STAT_ICONS = [BookOpen, Star, GitFork, Users];
 
 /* Deterministic pseudo-random contribution heatmap */
 function useHeatmap() {
@@ -92,7 +47,22 @@ const levelColors = [
 ];
 
 export function GitHub() {
+  const {
+    githubRepos: repoRows,
+    githubStats: statRows,
+    githubLanguages: languageStats,
+  } = useContent();
   const heatmap = useHeatmap();
+
+  const repos = useMemo(
+    () => repoRows.map((r, i) => ({ ...r, color: REPO_COLORS[i % REPO_COLORS.length] })),
+    [repoRows]
+  );
+
+  const stats = useMemo(
+    () => statRows.map((s, i) => ({ ...s, icon: STAT_ICONS[i % STAT_ICONS.length] })),
+    [statRows]
+  );
 
   return (
     <section id="github" className="relative z-10 py-32">
@@ -107,7 +77,7 @@ export function GitHub() {
           {/* Stats */}
           <StaggerContainer className="grid grid-cols-2 gap-4 lg:col-span-3">
             {stats.map((s) => (
-              <StaggerItem key={s.label}>
+              <StaggerItem key={s.id}>
                 <div className="group flex items-center gap-4 rounded-2xl glass-card p-5">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#4F8BFF]/20 to-[#8A5CFF]/20">
                     <s.icon size={20} className="text-[#7FE7FF]" />
@@ -175,7 +145,7 @@ export function GitHub() {
               <div className="mb-4 flex h-2.5 overflow-hidden rounded-full">
                 {languageStats.map((l) => (
                   <div
-                    key={l.name}
+                    key={l.id}
                     style={{
                       width: `${l.pct}%`,
                       background: l.color,
@@ -187,7 +157,7 @@ export function GitHub() {
               <div className="flex flex-col gap-3">
                 {languageStats.map((l) => (
                   <div
-                    key={l.name}
+                    key={l.id}
                     className="flex items-center justify-between text-sm"
                   >
                     <div className="flex items-center gap-2">
@@ -207,7 +177,7 @@ export function GitHub() {
           {/* Repo cards */}
           <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:col-span-3">
             {repos.map((r) => (
-              <StaggerItem key={r.name}>
+              <StaggerItem key={r.id}>
                 <div
                   className="group h-full rounded-2xl glass-card p-5 transition-all hover:border-white/20 hover:bg-white/[0.07]"
                   data-cursor="hover"

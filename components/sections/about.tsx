@@ -1,40 +1,15 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { Code2, Heart, Compass, Target } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal, StaggerContainer, StaggerItem } from '@/components/providers/reveal';
+import { useContent } from '@/components/providers/content-provider';
 
-const stats = [
-  { label: 'Years Learning', value: 2, suffix: '+' },
-  { label: 'Projects Built', value: 8, suffix: '' },
-  { label: 'GitHub Contributions', value: 2300, suffix: '+' },
-  { label: 'Technologies', value: 24, suffix: '+' },
-];
+const PILLAR_ICONS = [Code2, Heart, Compass, Target];
 
-const pillars = [
-  {
-    icon: Code2,
-    title: 'Bio',
-    text: 'I am a backend-focused software engineer who loves crafting reliable, high-performance systems. From distributed APIs to data pipelines, I turn complex problems into clean, maintainable code.',
-  },
-  {
-    icon: Heart,
-    title: 'Passion',
-    text: 'I am obsessed with performance, developer experience, and elegant architecture. Every millisecond matters, and so does every line of code that ships to production.',
-  },
-  {
-    icon: Compass,
-    title: 'Journey',
-    text: 'Started with scripting and automation, fell in love with Go and distributed systems, and have been building cloud-native applications and scalable APIs ever since.',
-  },
-  {
-    icon: Target,
-    title: 'Current Focus',
-    text: 'Deepening my expertise in observability, event-driven architecture, and edge computing — while mentoring the next generation of backend engineers.',
-  },
-];
+
 
 function CountUp({ value, suffix }: { value: number; suffix: string }) {
   const ref = useRef(null);
@@ -48,6 +23,18 @@ function CountUp({ value, suffix }: { value: number; suffix: string }) {
 }
 
 export function About() {
+  const { aboutStats: stats, aboutPillars: pillarRows } = useContent();
+
+  const pillars = useMemo(
+    () =>
+      pillarRows.map((p, i) => ({
+        ...p,
+        icon: PILLAR_ICONS[i % PILLAR_ICONS.length],
+        text: p.body,
+      })),
+    [pillarRows]
+  );
+
   return (
     <section id="about" className="relative z-10 py-32">
       <div className="mx-auto max-w-6xl px-6">
@@ -116,7 +103,7 @@ export function About() {
           <div className="flex flex-col gap-8">
             <StaggerContainer className="grid gap-4 sm:grid-cols-2">
               {pillars.map((p) => (
-                <StaggerItem key={p.title}>
+                <StaggerItem key={p.id}>
                   <div className="group h-full rounded-2xl glass-card p-5 transition-all hover:border-white/20 hover:bg-white/[0.07]">
                     <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#4F8BFF]/20 to-[#8A5CFF]/20">
                       <p.icon size={18} className="text-[#7FE7FF]" />
@@ -135,7 +122,7 @@ export function About() {
             {/* Stat cards */}
             <StaggerContainer className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               {stats.map((s) => (
-                <StaggerItem key={s.label}>
+                <StaggerItem key={s.id}>
                   <div className="group relative overflow-hidden rounded-2xl glass-card p-5 text-center">
                     <div
                       className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"

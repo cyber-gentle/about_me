@@ -1,80 +1,27 @@
 'use client';
 
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Github, ExternalLink, Star } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { StaggerContainer, StaggerItem } from '@/components/providers/reveal';
+import { useContent } from '@/components/providers/content-provider';
 
-const projects = [
-  {
-    title: 'Distributed API Gateway',
-    description:
-      'A high-throughput API gateway built in Go with rate limiting, circuit breaking, and dynamic routing. Handles 50k+ requests per second with sub-millisecond overhead.',
-    tech: ['Go', 'Redis', 'gRPC', 'Docker'],
-    stars: 342,
-    accent: '#4F8BFF',
-    span: 'lg:row-span-2',
-    image:
-      'https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=900',
-  },
-  {
-    title: 'Realtime Analytics Pipeline',
-    description:
-      'Event-driven data pipeline ingesting millions of events daily with stream processing and live dashboards.',
-    tech: ['Go', 'Kafka', 'PostgreSQL', 'Grafana'],
-    stars: 218,
-    accent: '#8A5CFF',
-    span: '',
-    image:
-      'https://images.pexels.com/photos/7376/startup-photos.jpg?auto=compress&cs=tinysrgb&w=900',
-  },
-  {
-    title: 'Cloud-Native Task Queue',
-    description:
-      'Reliable background job system with retries, priorities, and dead-letter queues. Powered by Go and Redis.',
-    tech: ['Go', 'Redis', 'Kubernetes', 'Prometheus'],
-    stars: 187,
-    accent: '#7FE7FF',
-    span: '',
-    image:
-      'https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=900',
-  },
-  {
-    title: 'Developer Portfolio Engine',
-    description:
-      'A headless CMS for developer portfolios with markdown content, instant previews, and edge-deployed rendering.',
-    tech: ['Next.js', 'TypeScript', 'Supabase', 'Tailwind'],
-    stars: 156,
-    accent: '#4F8BFF',
-    span: '',
-    image:
-      'https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=900',
-  },
-  {
-    title: 'Observability Toolkit',
-    description:
-      'OpenTelemetry-based tracing and metrics toolkit for Go services with one-line instrumentation and beautiful dashboards.',
-    tech: ['Go', 'OpenTelemetry', 'Grafana', 'Loki'],
-    stars: 264,
-    accent: '#8A5CFF',
-    span: 'lg:row-span-2',
-    image:
-      'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=900',
-  },
-  {
-    title: 'Auth Microservice',
-    description:
-      'JWT and OAuth2 authentication service with refresh tokens, RBAC, and audit logging.',
-    tech: ['Go', 'PostgreSQL', 'JWT', 'Docker'],
-    stars: 142,
-    accent: '#7FE7FF',
-    span: '',
-    image:
-      'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=900',
-  },
-];
+const ACCENTS = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
 
 export function Projects() {
+  const { projects: rows } = useContent();
+
+  const projects = useMemo(
+    () =>
+      rows.map((p, i) => ({
+        ...p,
+        accent: ACCENTS[i % ACCENTS.length],
+        span: i === 0 ? 'lg:row-span-2' : '',
+      })),
+    [rows]
+  );
+
   return (
     <section id="projects" className="relative z-10 py-32">
       <div className="mx-auto max-w-6xl px-6">
@@ -86,7 +33,7 @@ export function Projects() {
 
         <StaggerContainer className="mt-20 grid auto-rows-[minmax(280px,auto)] gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
-            <StaggerItem key={p.title} className={p.span}>
+            <StaggerItem key={p.id} className={p.span}>
               <motion.div
                 whileHover={{ y: -8 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 280 }}
@@ -144,13 +91,26 @@ export function Projects() {
 
                   {/* Buttons */}
                   <div className="flex gap-2">
-                    <button
-                      data-cursor="hover"
-                      className="group/btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 transition-all hover:border-white/25 hover:bg-white/10"
-                    >
-                      <ExternalLink size={13} />
-                      Live Demo
-                    </button>
+                    {p.url ? (
+                      <a
+                        href={p.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-cursor="hover"
+                        className="group/btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 transition-all hover:border-white/25 hover:bg-white/10"
+                      >
+                        <ExternalLink size={13} />
+                        Live Demo
+                      </a>
+                    ) : (
+                      <button
+                        data-cursor="hover"
+                        className="group/btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 transition-all hover:border-white/25 hover:bg-white/10"
+                      >
+                        <ExternalLink size={13} />
+                        Live Demo
+                      </button>
+                    )}
                     <button
                       data-cursor="hover"
                       className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 transition-all hover:border-white/25 hover:bg-white/10"
