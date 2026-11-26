@@ -45,26 +45,26 @@ export function Navbar() {
   };
 
   return (
-    <header
-      className={cn(
-        'fixed inset-x-0 top-0 z-[9990] border-b transition-colors duration-150 ease-out',
-        scrolled
-          ? 'border-white/10 bg-[#050505]/80 backdrop-blur-xl'
-          : 'border-transparent bg-transparent'
-      )}
-    >
-      <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between px-4 sm:px-6">
+    <header className="fixed inset-x-0 top-3 z-[9990] px-4">
+      <div
+        className={cn(
+          'mx-auto flex h-14 max-w-[1160px] items-center justify-between rounded-2xl px-4 sm:px-5 transition-all duration-300',
+          scrolled
+            ? 'glass-strong border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.55)]'
+            : 'border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+        )}
+      >
         {/* Brand */}
         <button
           onClick={() => go('#home')}
           className="group flex items-center gap-2.5 text-left"
           data-cursor="hover"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#434850] bg-[#161A1F] font-mono text-xs font-medium text-[#B0C8EC]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/15 bg-gradient-to-br from-[#4F8BFF]/30 to-[#8A5CFF]/30 font-mono text-xs font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
             AD
           </div>
-          <span className="font-display text-sm font-semibold tracking-tight text-[#E2E5EF]">
-            Abraham David
+          <span className="font-display text-sm font-semibold tracking-tight text-white">
+            Abraham<span className="text-[#7FE7FF]">.</span>David
           </span>
         </button>
 
@@ -78,16 +78,13 @@ export function Navbar() {
                 onClick={() => go(link.href)}
                 data-cursor="hover"
                 className={cn(
-                  'relative rounded-[6px] px-3 py-1.5 text-sm font-medium transition-colors duration-150 ease-out',
+                  'relative rounded-xl px-3 py-1.5 text-sm font-medium transition-all duration-150',
                   isActive
-                    ? 'text-[#B0C8EC]'
-                    : 'text-[#A7ABB4] hover:text-[#E2E5EF]'
+                    ? 'bg-white/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]'
+                    : 'text-white/60 hover:bg-white/[0.05] hover:text-white'
                 )}
               >
                 {link.label}
-                {isActive && (
-                  <span className="absolute inset-x-3 -bottom-0.5 h-[2px] bg-[#B0C8EC]" />
-                )}
               </button>
             );
           })}
@@ -99,7 +96,7 @@ export function Navbar() {
           <button
             onClick={() => go('#contact')}
             data-cursor="hover"
-            className="rounded-lg bg-gradient-to-r from-[#4F8BFF] to-[#8A5CFF] px-4 py-1.5 text-sm font-medium text-white shadow-[0_4px_20px_rgba(79,139,255,0.35)] transition-all duration-150 hover:shadow-[0_6px_24px_rgba(79,139,255,0.5)]"
+            className="rounded-xl bg-gradient-to-r from-[#4F8BFF] to-[#8A5CFF] px-4 py-1.5 text-sm font-medium text-white shadow-[0_4px_20px_rgba(79,139,255,0.4)] transition-all duration-150 hover:shadow-[0_6px_26px_rgba(79,139,255,0.6)]"
           >
             Get in touch
           </button>
@@ -108,7 +105,7 @@ export function Navbar() {
         {/* Mobile menu toggle */}
         <button
           onClick={() => setOpen((v) => !v)}
-          className="flex h-9 w-9 items-center justify-center rounded-[6px] border border-[#434850] bg-[#161A1F] text-[#E2E5EF] md:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/[0.06] text-white backdrop-blur-md md:hidden"
           aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
         >
           {open ? <X size={18} /> : <Menu size={18} />}
@@ -117,17 +114,17 @@ export function Navbar() {
 
       {/* Mobile drawer */}
       {open && (
-        <div className="border-t border-[#434850] bg-[#101418] px-4 py-4 md:hidden">
+        <div className="mx-auto mt-2 max-w-[1160px] rounded-2xl border border-white/15 bg-white/[0.06] p-4 backdrop-blur-2xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] md:hidden">
           <div className="flex flex-col gap-1">
             {links.map((link) => (
               <button
                 key={link.href}
                 onClick={() => go(link.href)}
                 className={cn(
-                  'rounded-[6px] px-3 py-2 text-left text-sm font-medium transition-colors duration-150 ease-out',
+                  'rounded-xl px-3 py-2 text-left text-sm font-medium transition-colors duration-150',
                   active === link.href
-                    ? 'bg-[#161A1F] text-[#B0C8EC]'
-                    : 'text-[#A7ABB4] hover:bg-[#161A1F] hover:text-[#E2E5EF]'
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/65 hover:bg-white/[0.05] hover:text-white'
                 )}
               >
                 {link.label}
@@ -135,7 +132,7 @@ export function Navbar() {
             ))}
             <button
               onClick={() => go('#contact')}
-              className="mt-2 rounded-[6px] bg-[#B0C8EC] px-3 py-2 text-center text-sm font-medium text-[#29425F]"
+              className="mt-2 rounded-xl bg-gradient-to-r from-[#4F8BFF] to-[#8A5CFF] px-3 py-2 text-center text-sm font-medium text-white shadow-[0_4px_20px_rgba(79,139,255,0.35)]"
             >
               Get in touch
             </button>
