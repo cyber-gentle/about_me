@@ -22,7 +22,7 @@ export function About() {
   return (
     <section
       id="about"
-      className="relative border-b border-[#434850] bg-gradient-to-b from-[#101418] via-[#0F1726] to-[#0C0E12] py-16 sm:py-20"
+      className="relative py-20 sm:py-28"
     >
       <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
         {/* Section header */}
@@ -42,7 +42,7 @@ export function About() {
         <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           {/* Left: Profile photo card + stats ledger */}
           <div className="space-y-4">
-            <div className="rounded-[8px] border border-[#434850] bg-[#161A1F] p-4">
+            <div className="glass-card rounded-2xl p-4">
               {/* Photo frame */}
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[6px] border border-[#434850] bg-[#101418]">
                 <img
@@ -80,7 +80,7 @@ export function About() {
                 {stats.map((stat) => (
                   <div
                     key={stat.id}
-                    className="rounded-[8px] border border-[#434850] bg-[#101418] p-4"
+                    className="glass-card rounded-2xl p-4"
                   >
                     <div className="font-display text-2xl font-bold text-[#E2E5EF] tabular-nums">
                       {stat.value.toLocaleString()}
@@ -102,7 +102,7 @@ export function About() {
               return (
                 <div
                   key={pillar.id}
-                  className="rounded-[8px] border border-[#434850] bg-[#161A1F] p-5 transition-colors duration-150 ease-out hover:border-[#71767E]"
+                  className="glass-card rounded-2xl p-5 transition-colors duration-150 ease-out hover:border-white/20"
                 >
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[6px] border border-[#434850] bg-[#101418] text-[#B0C8EC]">
                     <Icon size={18} />

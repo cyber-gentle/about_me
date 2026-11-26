@@ -53,7 +53,7 @@ export function TechStack() {
   return (
     <section
       id="techstack"
-      className="relative border-b border-[#434850] bg-gradient-to-b from-[#0C0E12] via-[#0F1726] to-[#101418] py-16 sm:py-24"
+      className="relative py-20 sm:py-28"
     >
       <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-2">

@@ -49,8 +49,8 @@ export function Navbar() {
       className={cn(
         'fixed inset-x-0 top-0 z-[9990] border-b transition-colors duration-150 ease-out',
         scrolled
-          ? 'border-[#434850] bg-[#0C0E12]/95'
-          : 'border-transparent bg-[#0C0E12]/80'
+          ? 'border-white/10 bg-[#050505]/80 backdrop-blur-xl'
+          : 'border-transparent bg-transparent'
       )}
     >
       <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between px-4 sm:px-6">
@@ -99,7 +99,7 @@ export function Navbar() {
           <button
             onClick={() => go('#contact')}
             data-cursor="hover"
-            className="rounded-[6px] bg-[#B0C8EC] px-3.5 py-1.5 text-sm font-medium text-[#29425F] transition-colors duration-150 ease-out hover:bg-[#D3E4FF]"
+            className="rounded-lg bg-gradient-to-r from-[#4F8BFF] to-[#8A5CFF] px-4 py-1.5 text-sm font-medium text-white shadow-[0_4px_20px_rgba(79,139,255,0.35)] transition-all duration-150 hover:shadow-[0_6px_24px_rgba(79,139,255,0.5)]"
           >
             Get in touch
           </button>

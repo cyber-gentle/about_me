@@ -1,92 +1,156 @@
 'use client';
 
+import { useRef } from 'react';
+import { motion, MotionValue, useScroll, useTransform } from 'framer-motion';
 import { ExternalLink, Star } from 'lucide-react';
 import { useContent } from '@/components/providers/content-provider';
+import type { ProjectItem } from '@/lib/content-types';
+
+function ProjectSlide({
+  project,
+  index,
+  total,
+  progress,
+}: {
+  project: ProjectItem;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+}) {
+  const step = 1 / Math.max(total - 1, 1);
+  const center = index * step;
+
+  // Slide from right (+100%) -> center (0%) -> left (-100%)
+  const x = useTransform(
+    progress,
+    [center - step, center, center + step],
+    ['100%', '0%', '-100%']
+  );
+  const opacity = useTransform(
+    progress,
+    [center - step * 0.7, center, center + step * 0.7],
+    [0, 1, 0]
+  );
+
+  return (
+    <motion.article
+      style={{
+        x: total > 1 ? x : '0%',
+        opacity: total > 1 ? opacity : 1,
+      }}
+      className="glass-card absolute inset-0 flex flex-col justify-between rounded-2xl p-6 sm:p-8"
+    >
+      <div className="grid h-full gap-8 md:grid-cols-[0.85fr_1.15fr] md:items-center">
+        {/* Left: Project details */}
+        <div className="flex flex-col justify-between">
+          <div>
+            <div className="mb-3 flex items-center gap-2 font-mono text-xs text-[#B0C8EC] tabular-nums">
+              <span>Project {String(index + 1).padStart(2, '0')}</span>
+              <span className="text-[#434850]">/</span>
+              <span className="text-[#A7ABB4]">
+                {String(total).padStart(2, '0')}
+              </span>
+              <span className="ml-auto inline-flex items-center gap-1 rounded-full border border-[#434850] bg-[#101418] px-2.5 py-0.5 text-[#A7ABB4]">
+                <Star size={12} className="text-[#B0C8EC]" />
+                {project.stars}
+              </span>
+            </div>
+
+            <h3 className="font-display text-2xl font-bold tracking-tight text-[#E2E5EF] sm:text-[32px] sm:leading-[38px]">
+              {project.title}
+            </h3>
+
+            <p className="mt-2 font-mono text-xs text-[#71767E]">
+              {project.tech.join(' · ')}
+            </p>
+
+            <p className="mt-4 text-sm leading-relaxed text-[#A7ABB4] sm:text-[15px]">
+              {project.description}
+            </p>
+          </div>
+
+          <div className="mt-6">
+            <a
+              href={project.url || '#projects'}
+              target={project.url ? '_blank' : undefined}
+              rel={project.url ? 'noopener noreferrer' : undefined}
+              data-cursor="hover"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4F8BFF] to-[#8A5CFF] px-5 py-2.5 text-xs font-semibold text-white shadow-[0_6px_24px_rgba(79,139,255,0.35)] transition-all duration-150 ease-out hover:shadow-[0_8px_28px_rgba(79,139,255,0.5)]"
+            >
+              View Project
+              <ExternalLink size={13} />
+            </a>
+          </div>
+        </div>
+
+        {/* Right: Large project image */}
+        <div className="aspect-[16/10] w-full overflow-hidden rounded-[6px] border border-[#434850] bg-[#101418]">
+          {project.image ? (
+            <img
+              src={project.image}
+              alt={project.title}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center font-mono text-xs text-[#71767E]">
+              {project.title}
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.article>
+  );
+}
 
 export function Projects() {
   const { projects } = useContent();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const total = projects.length;
 
   return (
     <section
       id="projects"
-      className="relative border-b border-[#434850] bg-gradient-to-b from-[#101418] via-[#0F1726] to-[#0C0E12] py-16 sm:py-20"
+      ref={containerRef}
+      style={{ height: total > 1 ? `${total * 100}vh` : 'auto' }}
+      className="relative"
     >
-      <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-        <div className="mb-10 max-w-2xl">
-          <p className="font-mono text-xs font-medium uppercase tracking-wider text-[#B0C8EC]">
-            Selected Work
-          </p>
-          <h2 className="mt-2 font-display text-[28px] font-semibold leading-[34px] tracking-[-0.25px] text-[#E2E5EF] sm:text-[36px] sm:leading-[42px] sm:tracking-[-0.5px]">
-            Shipped systems &amp; projects
-          </h2>
-          <p className="mt-3 text-[15px] leading-[24px] text-[#A7ABB4]">
-            Production-grade services and tools built with performance,
-            reliability, and clean architecture in mind.
-          </p>
-        </div>
+      <div className="sticky top-16 flex min-h-[calc(100vh-4rem)] items-center py-12">
+        <div className="mx-auto w-full max-w-[1120px] px-4 sm:px-6">
+          {/* Header */}
+          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="max-w-2xl">
+              <p className="font-mono text-xs font-medium uppercase tracking-wider text-[#B0C8EC]">
+                Selected Work
+              </p>
+              <h2 className="mt-2 font-display text-[28px] font-semibold leading-[34px] tracking-[-0.25px] text-[#E2E5EF] sm:text-[36px] sm:leading-[42px] sm:tracking-[-0.5px]">
+                Shipped systems &amp; projects
+              </h2>
+            </div>
+            {total > 1 && (
+              <p className="font-mono text-xs text-[#A7ABB4]">
+                Scroll to cycle projects
+              </p>
+            )}
+          </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {projects.map((p) => (
-            <article
-              key={p.id}
-              className="flex min-h-[260px] flex-col justify-between rounded-[8px] border border-[#434850] bg-[#161A1F] p-7 transition-colors duration-150 ease-out hover:border-[#71767E]"
-            >
-              <div>
-                {/* Project image */}
-                {p.image ? (
-                  <div className="mb-5 aspect-[16/9] w-full overflow-hidden rounded-[6px] border border-[#434850] bg-[#101418]">
-                    <img
-                      src={p.image}
-                      alt={p.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ) : null}
-
-                {/* Header */}
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <h3 className="font-display text-xl font-semibold text-[#E2E5EF]">
-                    {p.title}
-                  </h3>
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#434850] bg-[#101418] px-2.5 py-0.5 font-mono text-xs text-[#A7ABB4] tabular-nums">
-                    <Star size={12} className="text-[#B0C8EC]" />
-                    {p.stars}
-                  </span>
-                </div>
-
-                {/* Description */}
-                <p className="text-sm leading-relaxed text-[#A7ABB4]">
-                  {p.description}
-                </p>
-
-                {/* Tech tags */}
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {p.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-[4px] border border-[#434850] bg-[#101418] px-2 py-0.5 font-mono text-xs text-[#A7ABB4]"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="mt-5 border-t border-[#434850] pt-4">
-                <a
-                  href={p.url || '#projects'}
-                  target={p.url ? '_blank' : undefined}
-                  rel={p.url ? 'noopener noreferrer' : undefined}
-                  data-cursor="hover"
-                  className="inline-flex w-full items-center justify-center gap-1.5 rounded-[6px] bg-[#B0C8EC] px-3 py-2 text-xs font-medium text-[#29425F] transition-colors duration-150 ease-out hover:bg-[#D3E4FF]"
-                >
-                  View Project
-                  <ExternalLink size={13} />
-                </a>
-              </div>
-            </article>
-          ))}
+          {/* Focused single-project stage */}
+          <div className="relative h-[520px] w-full overflow-hidden sm:h-[420px]">
+            {projects.map((p, i) => (
+              <ProjectSlide
+                key={p.id}
+                project={p}
+                index={i}
+                total={total}
+                progress={scrollYProgress}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

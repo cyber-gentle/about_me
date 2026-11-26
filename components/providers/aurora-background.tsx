@@ -57,15 +57,6 @@ export function AuroraBackground() {
 
       {/* Subtle grid overlay */}
       <div className="grid-bg absolute inset-0 opacity-40" />
-
-      {/* Top fade */}
-      <div
-        className="absolute inset-x-0 top-0 h-32"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(5,5,5,0.8) 0%, transparent 100%)',
-        }}
-      />
     </div>
   );
 }

@@ -56,8 +56,7 @@
     scroll-behavior: smooth;
   }
   body {
-    background: linear-gradient(180deg, #0C0E12 0%, #0F1624 50%, #0C0E12 100%);
-    background-color: #0C0E12;
+    background-color: #050505;
     color: hsl(var(--foreground));
     font-feature-settings: "ss01", "cv01", "cv02";
     -webkit-font-smoothing: antialiased;
