@@ -1,26 +1,10 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useMemo, useRef } from 'react';
-import { Code2, Heart, Compass, Target } from 'lucide-react';
-import { SectionHeading } from '@/components/section-heading';
-import { Reveal, StaggerContainer, StaggerItem } from '@/components/providers/reveal';
+import { useMemo } from 'react';
+import { Code2, Compass, Heart, Target } from 'lucide-react';
 import { useContent } from '@/components/providers/content-provider';
 
 const PILLAR_ICONS = [Code2, Heart, Compass, Target];
-
-
-
-function CountUp({ value, suffix }: { value: number; suffix: string }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-50px' });
-  return (
-    <span ref={ref}>
-      {inView ? value.toLocaleString() : '0'}
-      {suffix}
-    </span>
-  );
-}
 
 export function About() {
   const { aboutStats: stats, aboutPillars: pillarRows } = useContent();
@@ -36,111 +20,102 @@ export function About() {
   );
 
   return (
-    <section id="about" className="relative z-10 py-32">
-      <div className="mx-auto max-w-6xl px-6">
-        <SectionHeading
-          eyebrow="About Me"
-          title="The Engineer Behind the Code"
-          description="A blend of systems thinking, performance obsession, and a love for building software that scales gracefully."
-        />
+    <section
+      id="about"
+      className="relative border-b border-[#434850] bg-gradient-to-b from-[#101418] via-[#0F1726] to-[#0C0E12] py-16 sm:py-20"
+    >
+      <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
+        {/* Section header */}
+        <div className="mb-10 max-w-2xl">
+          <p className="font-mono text-xs font-medium uppercase tracking-wider text-[#B0C8EC]">
+            About
+          </p>
+          <h2 className="mt-2 font-display text-[28px] font-semibold leading-[34px] tracking-[-0.25px] text-[#E2E5EF] sm:text-[36px] sm:leading-[42px] sm:tracking-[-0.5px]">
+            The engineer behind the code
+          </h2>
+          <p className="mt-3 text-[15px] leading-[24px] text-[#A7ABB4]">
+            A blend of systems thinking, performance discipline, and a focus on
+            building software that scales cleanly.
+          </p>
+        </div>
 
-        <div className="mt-20 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          {/* Image frame */}
-          <Reveal>
-            <div className="relative mx-auto max-w-sm lg:sticky lg:top-28">
-              {/* Glow border */}
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-[#4F8BFF]/40 via-[#8A5CFF]/30 to-[#7FE7FF]/40 opacity-60 blur-xl" />
-              <div className="border-glow relative overflow-hidden rounded-3xl">
-                <div className="glass-card overflow-hidden rounded-3xl p-2">
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                    {/* Placeholder portrait using gradient + initials */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1f] via-[#0d0a1f] to-[#0a1a1f]" />
-                    <div
-                      className="absolute inset-0 opacity-40"
-                      style={{
-                        background:
-                          'radial-gradient(circle at 30% 20%, rgba(79,139,255,0.4), transparent 50%), radial-gradient(circle at 70% 80%, rgba(138,92,255,0.4), transparent 50%)',
-                      }}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="font-display text-[7rem] font-bold text-white/10">
-                        AD
-                      </span>
-                    </div>
-                    {/* Floating tag */}
-                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl glass px-3 py-2">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span className="text-xs font-medium text-white/80">
-                          Abraham David
-                        </span>
-                      </div>
-                      <span className="font-mono text-[10px] text-white/40">
-                        Backend Engineer
-                      </span>
-                    </div>
-                  </div>
+        <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+          {/* Left: Profile photo card + stats ledger */}
+          <div className="space-y-4">
+            <div className="rounded-[8px] border border-[#434850] bg-[#161A1F] p-4">
+              {/* Photo frame */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[6px] border border-[#434850] bg-[#101418]">
+                <img
+                  src="/profile.jpg"
+                  alt="Abraham David"
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+                <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center font-display text-4xl font-bold text-[#B0C8EC]/30">
+                  AD
                 </div>
               </div>
 
-              {/* Floating accent dots */}
-              <motion.div
-                className="absolute -right-3 top-10 h-3 w-3 rounded-full bg-[#7FE7FF]"
-                animate={{ y: [0, -12, 0], opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                style={{ boxShadow: '0 0 16px #7FE7FF' }}
-              />
-              <motion.div
-                className="absolute -left-3 bottom-20 h-2.5 w-2.5 rounded-full bg-[#8A5CFF]"
-                animate={{ y: [0, 10, 0], opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-                style={{ boxShadow: '0 0 16px #8A5CFF' }}
-              />
+              {/* Caption bar */}
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-display text-base font-semibold text-[#E2E5EF]">
+                    Abraham David
+                  </h3>
+                  <p className="font-mono text-xs text-[#A7ABB4]">
+                    Backend Engineer · Remote
+                  </p>
+                </div>
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#434850] bg-[#101418] px-2.5 py-1 font-mono text-[11px] text-[#B0C8EC]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#B0C8EC]" />
+                  Available
+                </span>
+              </div>
             </div>
-          </Reveal>
 
-          {/* Pillars + stats */}
-          <div className="flex flex-col gap-8">
-            <StaggerContainer className="grid gap-4 sm:grid-cols-2">
-              {pillars.map((p) => (
-                <StaggerItem key={p.id}>
-                  <div className="group h-full rounded-2xl glass-card p-5 transition-all hover:border-white/20 hover:bg-white/[0.07]">
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#4F8BFF]/20 to-[#8A5CFF]/20">
-                      <p.icon size={18} className="text-[#7FE7FF]" />
+            {stats.length > 0 && (
+              <div className="grid grid-cols-2 gap-3">
+                {stats.map((stat) => (
+                  <div
+                    key={stat.id}
+                    className="rounded-[8px] border border-[#434850] bg-[#101418] p-4"
+                  >
+                    <div className="font-display text-2xl font-bold text-[#E2E5EF] tabular-nums">
+                      {stat.value.toLocaleString()}
+                      {stat.suffix}
                     </div>
-                    <h3 className="mb-2 font-display text-base font-semibold text-white">
-                      {p.title}
-                    </h3>
-                    <p className="text-sm leading-relaxed text-white/50">
-                      {p.text}
-                    </p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-
-            {/* Stat cards */}
-            <StaggerContainer className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {stats.map((s) => (
-                <StaggerItem key={s.id}>
-                  <div className="group relative overflow-hidden rounded-2xl glass-card p-5 text-center">
-                    <div
-                      className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-                      style={{
-                        background:
-                          'radial-gradient(circle at 50% 0%, rgba(79,139,255,0.15), transparent 70%)',
-                      }}
-                    />
-                    <div className="relative font-display text-3xl font-bold text-gradient-blue sm:text-4xl">
-                      <CountUp value={s.value} suffix={s.suffix} />
-                    </div>
-                    <div className="relative mt-1 text-xs font-medium text-white/50">
-                      {s.label}
+                    <div className="mt-1 font-mono text-xs text-[#A7ABB4]">
+                      {stat.label}
                     </div>
                   </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right: Engineering pillars */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {pillars.map((pillar) => {
+              const Icon = pillar.icon;
+              return (
+                <div
+                  key={pillar.id}
+                  className="rounded-[8px] border border-[#434850] bg-[#161A1F] p-5 transition-colors duration-150 ease-out hover:border-[#71767E]"
+                >
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[6px] border border-[#434850] bg-[#101418] text-[#B0C8EC]">
+                    <Icon size={18} />
+                  </div>
+                  <h3 className="font-display text-base font-semibold text-[#E2E5EF]">
+                    {pillar.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#A7ABB4]">
+                    {pillar.text}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

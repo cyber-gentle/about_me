@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { LiveClock } from '@/components/live-clock';
 import { cn } from '@/lib/utils';
@@ -9,7 +8,7 @@ import { cn } from '@/lib/utils';
 const links = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
+  { label: 'Stack', href: '#techstack' },
   { label: 'Projects', href: '#projects' },
   { label: 'Experience', href: '#experience' },
   { label: 'Contact', href: '#contact' },
@@ -22,7 +21,7 @@ export function Navbar() {
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 40);
+      setScrolled(window.scrollY > 24);
       const sections = links.map((l) => l.href.slice(1));
       for (const id of sections) {
         const el = document.getElementById(id);
@@ -46,130 +45,103 @@ export function Navbar() {
   };
 
   return (
-    <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed left-1/2 top-4 z-[9990] w-[calc(100%-2rem)] max-w-6xl -translate-x-1/2"
-      >
-        <div
-          className={cn(
-            'flex items-center justify-between rounded-2xl px-5 py-3 transition-all duration-500',
-            scrolled
-              ? 'glass-strong shadow-2xl'
-              : 'border border-transparent bg-transparent'
-          )}
+    <header
+      className={cn(
+        'fixed inset-x-0 top-0 z-[9990] border-b transition-colors duration-150 ease-out',
+        scrolled
+          ? 'border-[#434850] bg-[#0C0E12]/95'
+          : 'border-transparent bg-[#0C0E12]/80'
+      )}
+    >
+      <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between px-4 sm:px-6">
+        {/* Brand */}
+        <button
+          onClick={() => go('#home')}
+          className="group flex items-center gap-2.5 text-left"
+          data-cursor="hover"
         >
-          {/* Logo */}
-          <button
-            onClick={() => go('#home')}
-            className="group flex items-center gap-2.5"
-            data-cursor="hover"
-          >
-            <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-[#4F8BFF]/30 to-[#8A5CFF]/30">
-              <div className="absolute inset-0 flex items-center justify-center font-display text-sm font-bold text-white">
-                AD
-              </div>
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5 }}
-              />
-            </div>
-            <span className="font-display text-sm font-semibold tracking-tight text-white/90">
-              Abraham<span className="text-[#7FE7FF]">.</span>David
-            </span>
-          </button>
+          <div className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#434850] bg-[#161A1F] font-mono text-xs font-medium text-[#B0C8EC]">
+            AD
+          </div>
+          <span className="font-display text-sm font-semibold tracking-tight text-[#E2E5EF]">
+            Abraham David
+          </span>
+        </button>
 
-          {/* Desktop links */}
-          <div className="hidden items-center gap-1 md:flex">
-            {links.map((link) => (
+        {/* Desktop links */}
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+          {links.map((link) => {
+            const isActive = active === link.href;
+            return (
               <button
                 key={link.href}
                 onClick={() => go(link.href)}
                 data-cursor="hover"
                 className={cn(
-                  'relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors',
-                  active === link.href
-                    ? 'text-white'
-                    : 'text-white/50 hover:text-white/90'
+                  'relative rounded-[6px] px-3 py-1.5 text-sm font-medium transition-colors duration-150 ease-out',
+                  isActive
+                    ? 'text-[#B0C8EC]'
+                    : 'text-[#A7ABB4] hover:text-[#E2E5EF]'
                 )}
               >
                 {link.label}
-                {active === link.href && (
-                  <motion.span
-                    layoutId="nav-underline"
-                    className="absolute inset-x-2 -bottom-0.5 h-[2px] rounded-full"
-                    style={{
-                      background:
-                        'linear-gradient(90deg, #4F8BFF, #8A5CFF, #7FE7FF)',
-                    }}
-                    transition={{ type: 'spring', damping: 22, stiffness: 280 }}
-                  />
+                {isActive && (
+                  <span className="absolute inset-x-3 -bottom-0.5 h-[2px] bg-[#B0C8EC]" />
                 )}
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </nav>
 
-          {/* Right side */}
-          <div className="hidden items-center gap-4 md:flex">
-            <LiveClock />
-            <button
-              onClick={() => go('#contact')}
-              data-cursor="hover"
-              className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all hover:border-white/20"
-            >
-              <span className="relative z-10">Let&apos;s Talk</span>
-              <motion.div
-                className="absolute inset-0 origin-left bg-gradient-to-r from-[#4F8BFF] to-[#8A5CFF]"
-                initial={{ scaleX: 0 }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.3 }}
-                style={{ transformOrigin: 'left' }}
-              />
-            </button>
-          </div>
-
-          {/* Mobile toggle */}
+        {/* Right side */}
+        <div className="hidden items-center gap-4 md:flex">
+          <LiveClock />
           <button
-            onClick={() => setOpen((v) => !v)}
-            className="rounded-lg p-2 text-white/70 md:hidden"
-            aria-label="Toggle menu"
+            onClick={() => go('#contact')}
+            data-cursor="hover"
+            className="rounded-[6px] bg-[#B0C8EC] px-3.5 py-1.5 text-sm font-medium text-[#29425F] transition-colors duration-150 ease-out hover:bg-[#D3E4FF]"
           >
-            {open ? <X size={20} /> : <Menu size={20} />}
+            Get in touch
           </button>
         </div>
-      </motion.nav>
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed left-1/2 top-20 z-[9990] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 md:hidden"
-          >
-            <div className="glass-strong flex flex-col gap-1 rounded-2xl p-3">
-              {links.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => go(link.href)}
-                  className={cn(
-                    'rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors',
-                    active === link.href
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/60 hover:bg-white/5 hover:text-white'
-                  )}
-                >
-                  {link.label}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        {/* Mobile menu toggle */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="flex h-9 w-9 items-center justify-center rounded-[6px] border border-[#434850] bg-[#161A1F] text-[#E2E5EF] md:hidden"
+          aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+        >
+          {open ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      {open && (
+        <div className="border-t border-[#434850] bg-[#101418] px-4 py-4 md:hidden">
+          <div className="flex flex-col gap-1">
+            {links.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => go(link.href)}
+                className={cn(
+                  'rounded-[6px] px-3 py-2 text-left text-sm font-medium transition-colors duration-150 ease-out',
+                  active === link.href
+                    ? 'bg-[#161A1F] text-[#B0C8EC]'
+                    : 'text-[#A7ABB4] hover:bg-[#161A1F] hover:text-[#E2E5EF]'
+                )}
+              >
+                {link.label}
+              </button>
+            ))}
+            <button
+              onClick={() => go('#contact')}
+              className="mt-2 rounded-[6px] bg-[#B0C8EC] px-3 py-2 text-center text-sm font-medium text-[#29425F]"
+            >
+              Get in touch
+            </button>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }

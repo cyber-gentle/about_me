@@ -1,23 +1,38 @@
 'use client';
 
-import { useRef, useState, useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { SectionHeading } from '@/components/section-heading';
-import { Reveal } from '@/components/providers/reveal';
 import { useContent } from '@/components/providers/content-provider';
 
-const colors = ['#4F8BFF', '#8A5CFF', '#7FE7FF'];
+const CATEGORIES = ['All', 'Languages', 'Backend', 'Data', 'Infra'] as const;
+type Category = (typeof CATEGORIES)[number];
+
+function inferCategory(name: string): Category {
+  const n = name.toLowerCase();
+  if (['go', 'python', 'typescript', 'javascript', 'html', 'css'].some((k) => n.includes(k))) {
+    return 'Languages';
+  }
+  if (['postgres', 'mysql', 'redis', 'sql', 'mongo'].some((k) => n.includes(k))) {
+    return 'Data';
+  }
+  if (['docker', 'linux', 'git', 'github', 'vs code', 'cloud', 'k8s'].some((k) => n.includes(k))) {
+    return 'Infra';
+  }
+  return 'Backend';
+}
 
 export function TechStack() {
   const { techs } = useContent();
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
+  const inView = useInView(ref, { once: true, margin: '-80px' });
   const [hovered, setHovered] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState<Category>('All');
 
-  // Distribute icons on a sphere using fibonacci sphere
   const positions = useMemo(() => {
     const n = techs.length;
-    const radius = 180;
+    if (n === 0) return [];
+    if (n === 1) return [{ x: 0, y: 0, z: 0 }];
+    const radius = 175;
     const pts: { x: number; y: number; z: number }[] = [];
     const golden = Math.PI * (3 - Math.sqrt(5));
     for (let i = 0; i < n; i++) {
@@ -33,132 +48,156 @@ export function TechStack() {
     return pts;
   }, [techs]);
 
-  return (
-    <section id="techstack" className="relative z-10 py-32">
-      <div className="mx-auto max-w-6xl px-6">
-        <SectionHeading
-          eyebrow="Tech Stack"
-          title="Technologies I Work With"
-          description="An interactive constellation of the tools, languages, and platforms I use to build and ship software."
-        />
+  const activeTech = hovered !== null ? techs[hovered] : null;
 
-        <div className="mt-20 grid items-center gap-12 lg:grid-cols-2">
-          {/* Sphere */}
-          <Reveal>
+  return (
+    <section
+      id="techstack"
+      className="relative border-b border-[#434850] bg-gradient-to-b from-[#0C0E12] via-[#0F1726] to-[#101418] py-16 sm:py-24"
+    >
+      <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          {/* Left: 3D Rotating Sphere */}
+          <div
+            ref={ref}
+            className="relative mx-auto flex h-[380px] w-full max-w-md items-center justify-center sm:h-[420px]"
+            style={{ perspective: 1000 }}
+          >
+            {/* Subtle radial vignette */}
             <div
-              ref={ref}
-              className="relative mx-auto flex h-[420px] w-full max-w-md items-center justify-center"
-              style={{ perspective: 1000 }}
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(176,200,236,0.08) 0%, transparent 65%)',
+              }}
+              aria-hidden="true"
+            />
+
+            {/* Center readout */}
+            <div className="pointer-events-none relative z-10 text-center">
+              <div className="font-display text-2xl font-bold tracking-tight text-[#B0C8EC]">
+                {activeTech ? activeTech.name : 'My Stack'}
+              </div>
+              <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.2em] text-[#A7ABB4] tabular-nums">
+                {activeTech ? activeTech.short : `${techs.length} TECHNOLOGIES`}
+              </div>
+            </div>
+
+            {/* Rotating group */}
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              style={{ transformStyle: 'preserve-3d' }}
+              animate={inView ? { rotateY: 360 } : {}}
+              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
             >
-              {/* Glow core */}
+              {/* Wireframe rings */}
               <div
-                className="absolute h-40 w-40 rounded-full opacity-40 blur-3xl"
-                style={{
-                  background:
-                    'radial-gradient(circle, rgba(79,139,255,0.6), transparent 70%)',
-                }}
+                className="absolute h-[350px] w-[350px] rounded-full border border-[#434850]/40"
+                style={{ transform: 'translateZ(0)' }}
+              />
+              <div
+                className="absolute h-[350px] w-[350px] rounded-full border border-[#434850]/25"
+                style={{ transform: 'rotateX(70deg)' }}
+              />
+              <div
+                className="absolute h-[350px] w-[350px] rounded-full border border-[#434850]/25"
+                style={{ transform: 'rotateY(70deg)' }}
               />
 
-              {/* Rotating group */}
-              <motion.div
-                className="relative preserve-3d"
-                style={{ transformStyle: 'preserve-3d' }}
-                animate={inView ? { rotateY: 360 } : {}}
-                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-              >
-                {/* Wireframe sphere */}
-                <div
-                  className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
-                  style={{ transform: 'translateZ(0)' }}
-                />
-                <div
-                  className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"
-                  style={{ transform: 'rotateX(70deg)' }}
-                />
-                <div
-                  className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"
-                  style={{ transform: 'rotateY(70deg)' }}
-                />
+              {/* Orbiting badges */}
+              {techs.map((tech, i) => {
+                const p = positions[i];
+                if (!p) return null;
+                const isHovered = hovered === i;
+                const matchesCategory =
+                  activeCategory === 'All' ||
+                  inferCategory(tech.name) === activeCategory;
 
-                {/* Orbiting icons */}
-                {techs.map((tech, i) => {
-                  const p = positions[i];
-                  const color = colors[i % colors.length];
-                  return (
-                    <div
-                      key={tech.name}
-                      className="absolute left-1/2 top-1/2"
-                      style={{
-                        transform: `translate3d(${p.x}px, ${p.y}px, ${p.z}px)`,
-                        transformStyle: 'preserve-3d',
-                      }}
-                    >
-                      <div
-                        onMouseEnter={() => setHovered(i)}
-                        onMouseLeave={() => setHovered(null)}
-                        data-cursor="hover"
-                        className="flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl border text-xs font-bold backdrop-blur-md transition-all"
-                        style={{
-                          background:
-                            hovered === i
-                              ? `${color}30`
-                              : 'rgba(255,255,255,0.04)',
-                          borderColor:
-                            hovered === i ? color : 'rgba(255,255,255,0.1)',
-                          boxShadow:
-                            hovered === i ? `0 0 24px ${color}80` : 'none',
-                          color: hovered === i ? '#fff' : 'rgba(255,255,255,0.7)',
-                        }}
-                      >
-                        {tech.short}
-                      </div>
-                    </div>
-                  );
-                })}
-              </motion.div>
-
-              {/* Center label */}
-              <div className="pointer-events-none absolute z-10 text-center">
-                <div className="font-display text-2xl font-bold text-gradient">
-                  {hovered !== null ? techs[hovered].name : 'My Stack'}
-                </div>
-                <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-white/30">
-                  {hovered !== null ? 'Hover to explore' : `${techs.length} technologies`}
-                </div>
-              </div>
-            </div>
-          </Reveal>
-
-          {/* Tech list */}
-          <Reveal delay={0.1}>
-            <div className="flex flex-col gap-4">
-              <h3 className="font-display text-2xl font-semibold text-white">
-                Every tool has a purpose
-              </h3>
-              <p className="text-sm leading-relaxed text-white/50">
-                I choose technologies based on the problem, not the hype. Here is
-                the full set of tools I reach for regularly — each one battle-tested
-                in production environments.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {techs.map((tech, i) => (
-                  <motion.span
+                return (
+                  <div
                     key={tech.name}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.04 }}
+                    className="absolute left-1/2 top-1/2"
+                    style={{
+                      transform: `translate3d(${p.x}px, ${p.y}px, ${p.z}px)`,
+                      transformStyle: 'preserve-3d',
+                    }}
+                  >
+                    <div
+                      onMouseEnter={() => setHovered(i)}
+                      onMouseLeave={() => setHovered(null)}
+                      data-cursor="hover"
+                      className={`flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-[8px] border font-mono text-xs font-medium transition-all duration-150 ${
+                        isHovered
+                          ? 'border-[#B0C8EC] bg-[#1C2026] text-[#B0C8EC]'
+                          : matchesCategory
+                            ? 'border-[#434850] bg-[#161A1F]/90 text-[#E2E5EF]'
+                            : 'border-[#434850]/40 bg-[#101418]/50 text-[#71767E] opacity-40'
+                      }`}
+                    >
+                      {tech.short}
+                    </div>
+                  </div>
+                );
+              })}
+            </motion.div>
+          </div>
+
+          {/* Right: Eyebrow, Copy, Filter Chips & Pill Badges */}
+          <div>
+            <p className="font-mono text-xs font-medium uppercase tracking-wider text-[#B0C8EC]">
+              Tech Stack
+            </p>
+            <h2 className="mt-2 font-display text-[28px] font-semibold leading-[34px] tracking-[-0.25px] text-[#E2E5EF] sm:text-[32px] sm:leading-[38px]">
+              Every tool has a purpose
+            </h2>
+            <p className="mt-4 text-[15px] leading-[24px] text-[#A7ABB4]">
+              I choose technologies based on the problem, not the hype. Here is
+              the full set of tools I reach for regularly — each one
+              battle-tested in production environments.
+            </p>
+
+            {/* Category filter chips */}
+            <div className="mt-6 flex flex-wrap gap-1.5">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`rounded-[6px] border px-2.5 py-1 font-mono text-[11px] transition-colors duration-150 ${
+                    activeCategory === cat
+                      ? 'border-[#B0C8EC] bg-[#B0C8EC]/10 text-[#B0C8EC]'
+                      : 'border-[#434850] bg-[#101418] text-[#A7ABB4] hover:text-[#E2E5EF]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Tech pills */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {techs.map((tech, i) => {
+                const matchesCategory =
+                  activeCategory === 'All' ||
+                  inferCategory(tech.name) === activeCategory;
+                return (
+                  <span
+                    key={tech.name}
                     onMouseEnter={() => setHovered(i)}
                     onMouseLeave={() => setHovered(null)}
-                    className="cursor-default rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 transition-all hover:border-white/25 hover:bg-white/10 hover:text-white"
-                    data-cursor="hover"
+                    className={`cursor-default rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all duration-150 ${
+                      hovered === i
+                        ? 'border-[#B0C8EC] bg-[#1C2026] text-[#B0C8EC]'
+                        : matchesCategory
+                          ? 'border-[#434850] bg-[#161A1F] text-[#E2E5EF] hover:border-[#71767E]'
+                          : 'border-[#434850]/40 bg-[#101418] text-[#71767E] opacity-45'
+                    }`}
                   >
                     {tech.name}
-                  </motion.span>
-                ))}
-              </div>
+                  </span>
+                );
+              })}
             </div>
-          </Reveal>
+          </div>
         </div>
       </div>
     </section>
