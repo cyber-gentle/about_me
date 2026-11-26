@@ -14,8 +14,12 @@ import {
   UserRound,
   Github,
   Link2,
+  DatabaseBackup,
+  Loader2,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { seedEmptyTables } from '@/lib/seed-defaults';
+import { useContent } from '@/components/providers/content-provider';
 import { MessagesInbox } from '@/components/admin/messages-inbox';
 import {
   AboutManager,
@@ -43,8 +47,28 @@ const TABS = [
 type TabId = (typeof TABS)[number]['id'];
 
 export function AdminDashboard({ email }: { email: string }) {
+  const { reload } = useContent();
   const [tab, setTab] = useState<TabId>('messages');
   const [signingOut, setSigningOut] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [seedNote, setSeedNote] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleSeed = async () => {
+    setSeeding(true);
+    setSeedNote('');
+    const { seeded, error } = await seedEmptyTables();
+    if (error) {
+      setSeedNote(`Seed failed: ${error}`);
+    } else if (seeded.length === 0) {
+      setSeedNote('All tables already have content.');
+    } else {
+      setSeedNote(`Seeded ${seeded.length} table(s).`);
+      setRefreshKey((k) => k + 1);
+      await reload();
+    }
+    setSeeding(false);
+  };
 
   const signOut = async () => {
     setSigningOut(true);
@@ -78,6 +102,18 @@ export function AdminDashboard({ email }: { email: string }) {
             </div>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={handleSeed}
+              disabled={seeding}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#4F8BFF]/40 bg-[#4F8BFF]/15 px-3 py-2 text-xs font-medium text-[#7FE7FF] transition-all hover:bg-[#4F8BFF]/25 disabled:opacity-50"
+            >
+              {seeding ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <DatabaseBackup size={12} />
+              )}
+              {seeding ? 'Seeding...' : 'Seed defaults'}
+            </button>
             <a
               href="/"
               target="_blank"
@@ -128,8 +164,13 @@ export function AdminDashboard({ email }: { email: string }) {
 
       {/* Content */}
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-10">
+        {seedNote && (
+          <div className="mb-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 font-mono text-xs text-white/80">
+            {seedNote}
+          </div>
+        )}
         <motion.div
-          key={tab}
+          key={`${tab}-${refreshKey}`}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
