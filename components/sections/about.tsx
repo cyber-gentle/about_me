@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { Code2, Compass, Heart, Target } from 'lucide-react';
 import { useContent } from '@/components/providers/content-provider';
 
@@ -9,6 +10,7 @@ const PILLAR_COLORS = ['#4F8BFF', '#8A5CFF', '#7FE7FF', '#4F8BFF'];
 
 export function About() {
   const { aboutStats: stats, aboutPillars: pillarRows } = useContent();
+  const [imgError, setImgError] = useState(false);
 
   const pillars = useMemo(
     () =>
@@ -54,14 +56,16 @@ export function About() {
               <div className="relative rounded-2xl border border-white/15 bg-white/[0.05] p-4 backdrop-blur-2xl shadow-[0_16px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.16)]">
                 {/* Photo frame */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-white/15 bg-white/[0.03]">
-                  <img
-                    src="/profile.jpg"
-                    alt="Abraham David"
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
+                  {!imgError && (
+                    <Image
+                      src="/profile.jpg"
+                      alt="Abraham David"
+                      fill
+                      sizes="(min-width: 1024px) 38vw, 100vw"
+                      className="object-cover"
+                      onError={() => setImgError(true)}
+                    />
+                  )}
                   <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center font-display text-4xl font-bold text-[#7FE7FF]/30">
                     AD
                   </div>

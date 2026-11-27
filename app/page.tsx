@@ -1,5 +1,3 @@
-'use client';
-
 import { SmoothScroll } from '@/components/providers/smooth-scroll';
 import { CustomCursor } from '@/components/providers/custom-cursor';
 import { ScrollProgress } from '@/components/providers/scroll-progress';

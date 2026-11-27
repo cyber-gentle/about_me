@@ -80,16 +80,17 @@ export function Footer() {
             {/* Bottom row */}
             <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-xs text-white/30">
-                © {new Date().getFullYear()}  Abraham David. Crafted with precision.
-              </p>
-              <div className="flex items-center gap-4">
+                © {new Date().getFullYear()}{' '}
                 <a
                   href="/admin"
                   data-cursor="hover"
                   className="text-xs text-white/30 transition-colors hover:text-white/80"
                 >
-                  Admin
+                  Abraham David
                 </a>
+                . Crafted with precision.
+              </p>
+              <div className="flex items-center gap-4">
                 <button
                   onClick={scrollTop}
                   data-cursor="hover"

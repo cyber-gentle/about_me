@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { motion, MotionValue, useScroll, useTransform } from 'framer-motion';
 import { ExternalLink, Star } from 'lucide-react';
 import { useContent } from '@/components/providers/content-provider';
@@ -95,12 +96,14 @@ function ProjectSlide({
         </div>
 
         {/* Right: Large frosted project image frame */}
-        <div className="aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/15 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]">
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/15 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]">
           {project.image ? (
-            <img
+            <Image
               src={project.image}
               alt={project.title}
-              className="h-full w-full object-cover"
+              fill
+              sizes="(min-width: 768px) 55vw, 100vw"
+              className="object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center font-mono text-xs text-white/40">

@@ -1,37 +1,51 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Lenis from '@studio-freight/lenis';
+
+export interface LenisHandle {
+  scrollTo: (target: number, options?: { duration?: number }) => void;
+  raf: (time: number) => void;
+  destroy: () => void;
+}
 
 // Shared handle so scroll-driven sections can glide with Lenis
 // (e.g. snapping a showcase card into focus) instead of fighting it.
-export const lenisRef: { current: Lenis | null } = { current: null };
+export const lenisRef: { current: LenisHandle | null } = { current: null };
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
-  const lenisRefLocal = useRef<Lenis | null>(null);
+  const lenisRefLocal = useRef<LenisHandle | null>(null);
 
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-    });
-    lenisRef.current = lenis;
-    lenisRefLocal.current = lenis;
+    let cancelled = false;
+    let rafId = 0;
+    let lenisInstance: LenisHandle | null = null;
 
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
+    import('@studio-freight/lenis').then(({ default: LenisCtor }) => {
+      if (cancelled) return;
+      const lenis = new LenisCtor({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 2,
+      });
+      lenisInstance = lenis;
+      lenisRef.current = lenis;
+      lenisRefLocal.current = lenis;
+
+      function raf(time: number) {
+        lenis.raf(time);
+        rafId = requestAnimationFrame(raf);
+      }
       rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
+    });
 
     return () => {
+      cancelled = true;
       cancelAnimationFrame(rafId);
-      lenis.destroy();
+      lenisInstance?.destroy();
       lenisRef.current = null;
+      lenisRefLocal.current = null;
     };
   }, []);
 

@@ -37,3 +37,6 @@ next-env.d.ts
 
 # bolt.new artifacts
 .bolt/
+
+# Next.js Performance Analyzer
+.storage/

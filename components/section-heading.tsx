@@ -1,5 +1,3 @@
-'use client';
-
 import { Reveal } from '@/components/providers/reveal';
 import { cn } from '@/lib/utils';
 
