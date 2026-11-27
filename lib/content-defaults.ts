@@ -257,9 +257,7 @@ export const DEFAULT_GITHUB_REPOS: GithubRepoItem[] = [
 
 export const DEFAULT_ABOUT_STATS: AboutStatItem[] = [
   { id: 'a1', label: 'Years Learning', value: 2, suffix: '+', sort_order: 0 },
-  { id: 'a2', label: 'Projects Built', value: 8, suffix: '', sort_order: 1 },
   { id: 'a3', label: 'GitHub Contributions', value: 2300, suffix: '+', sort_order: 2 },
-  { id: 'a4', label: 'Technologies', value: 24, suffix: '+', sort_order: 3 },
 ];
 
 export const DEFAULT_ABOUT_PILLARS: AboutPillarItem[] = [
