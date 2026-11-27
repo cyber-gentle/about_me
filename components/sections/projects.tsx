@@ -19,16 +19,27 @@ function ProjectSlide({
 }) {
   const step = 1 / Math.max(total - 1, 1);
   const center = index * step;
+  const half = step / 2;
+  const band = step * 0.3;
+  const isLast = index === total - 1;
+
+  // Each slide owns a tiling window of the scroll progress, so exactly one
+  // card is on stage at a time: it slides in, holds centered, and is fully
+  // gone before the next card starts entering (no half-and-half overlap).
+  const w0 = center - half;
+  const w1 = center + half;
 
   const x = useTransform(
     progress,
-    [center - step, center, center + step],
-    ['100%', '0%', '-100%']
+    isLast ? [w0, w0 + band] : [w0, w0 + band, w1 - band, w1],
+    isLast ? ['100%', '0%'] : ['100%', '0%', '0%', '-100%']
   );
   const opacity = useTransform(
     progress,
-    [center - step * 0.7, center, center + step * 0.7],
-    [0, 1, 0]
+    isLast
+      ? [w0, w0 + band * 0.6]
+      : [w0, w0 + band * 0.6, w1 - band * 0.6, w1],
+    isLast ? [0, 1] : [0, 1, 1, 0]
   );
 
   return (
