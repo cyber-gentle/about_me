@@ -3,8 +3,12 @@
 import { useEffect, useRef } from 'react';
 import Lenis from '@studio-freight/lenis';
 
+// Shared handle so scroll-driven sections can glide with Lenis
+// (e.g. snapping a showcase card into focus) instead of fighting it.
+export const lenisRef: { current: Lenis | null } = { current: null };
+
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
-  const lenisRef = useRef<Lenis | null>(null);
+  const lenisRefLocal = useRef<Lenis | null>(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -15,6 +19,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       touchMultiplier: 2,
     });
     lenisRef.current = lenis;
+    lenisRefLocal.current = lenis;
 
     let rafId: number;
     function raf(time: number) {
@@ -26,6 +31,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 

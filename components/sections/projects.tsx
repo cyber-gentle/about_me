@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, MotionValue, useScroll, useTransform } from 'framer-motion';
 import { ExternalLink, Star } from 'lucide-react';
 import { useContent } from '@/components/providers/content-provider';
+import { lenisRef } from '@/components/providers/smooth-scroll';
 import type { ProjectItem } from '@/lib/content-types';
 
 function ProjectSlide({
@@ -122,6 +123,55 @@ export function Projects() {
   });
 
   const total = projects.length;
+  const step = 1 / Math.max(total - 1, 1);
+
+  // Scroll-snap: when the user stops scrolling and the active card is only
+  // partially shown (mid enter/exit), glide to the nearest card's focus
+  // center. Cards already fully in their hold zone are left alone.
+  useEffect(() => {
+    if (total <= 1) return;
+    const band = step * 0.3; // must match the enter/exit band in ProjectSlide
+    let raf = 0;
+    let last = -1;
+    let lastMove = 0;
+
+    const glide = (targetProgress: number) => {
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return; // off-screen
+      const top = rect.top + window.scrollY;
+      const target = top + targetProgress * (el.offsetHeight - window.innerHeight);
+      const lenis = lenisRef.current;
+      if (lenis) lenis.scrollTo(target, { duration: 0.7 });
+      else window.scrollTo({ top: target, behavior: 'smooth' });
+    };
+
+    const tick = (t: number) => {
+      raf = requestAnimationFrame(tick);
+      const v = scrollYProgress.get();
+      if (v <= 0 || v >= 1) {
+        last = v;
+        lastMove = t;
+        return;
+      }
+      if (v !== last) {
+        // still moving (user input or snap glide in flight)
+        last = v;
+        lastMove = t;
+        return;
+      }
+      if (t - lastMove < 150) return; // pause not detected yet
+      const idx = Math.min(Math.max(Math.round(v / step), 0), total - 1);
+      const center = idx * step;
+      if (Math.abs(v - center) > step * 0.22) {
+        glide(center);
+        lastMove = t;
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [total, step, scrollYProgress]);
 
   return (
     <section
