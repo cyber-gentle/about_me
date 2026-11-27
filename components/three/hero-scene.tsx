@@ -135,9 +135,7 @@ function Particles({ count = 400 }: { count?: number }) {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={count}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -209,9 +207,7 @@ function NetworkNodes() {
             <bufferGeometry>
               <bufferAttribute
                 attach="attributes-position"
-                count={2}
-                array={positions}
-                itemSize={3}
+                args={[positions, 3]}
               />
             </bufferGeometry>
             <lineBasicMaterial

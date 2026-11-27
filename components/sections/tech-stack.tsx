@@ -43,14 +43,17 @@ export function TechStack() {
     const radius = 175;
     const pts: { x: number; y: number; z: number }[] = [];
     const golden = Math.PI * (3 - Math.sqrt(5));
+    // Round to 2 decimals: keeps SSR and client style strings byte-identical
+    // (avoids hydration mismatches from float serialization differences).
+    const round = (v: number) => Math.round(v * 100) / 100;
     for (let i = 0; i < n; i++) {
       const y = 1 - (i / (n - 1)) * 2;
       const r = Math.sqrt(1 - y * y);
       const theta = golden * i;
       pts.push({
-        x: Math.cos(theta) * r * radius,
-        y: y * radius,
-        z: Math.sin(theta) * r * radius,
+        x: round(Math.cos(theta) * r * radius),
+        y: round(y * radius),
+        z: round(Math.sin(theta) * r * radius),
       });
     }
     return pts;

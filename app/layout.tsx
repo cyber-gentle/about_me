@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { ContentProvider } from '@/components/providers/content-provider';
 
@@ -20,6 +20,9 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  ),
   title: 'Abraham David — Backend Developer & Software Engineer',
   description:
     'Backend Developer specializing in Go, APIs, Web Development, Performance Optimization, and Modern Cloud Applications. Building fast, scalable, and beautiful software experiences.',
@@ -45,10 +48,11 @@ export const metadata: Metadata = {
     description:
       'Building fast, scalable, and beautiful software experiences.',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
   themeColor: '#050505',
 };
 
