@@ -212,17 +212,28 @@ export function Projects() {
               }}
               aria-hidden="true"
             />
-            <div className="relative h-[520px] w-full overflow-hidden sm:h-[420px]">
-              {projects.map((p, i) => (
-                <ProjectSlide
-                  key={p.id}
-                  project={p}
-                  index={i}
-                  total={total}
-                  progress={scrollYProgress}
-                />
-              ))}
-            </div>
+            {total === 0 ? (
+              <div className="flex h-[260px] w-full flex-col items-center justify-center rounded-2xl border border-white/15 bg-white/[0.05] p-8 text-center backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)]">
+                <p className="font-display text-lg font-semibold text-white">
+                  No projects published yet
+                </p>
+                <p className="mt-2 max-w-md text-sm text-white/55">
+                  New systems and case studies are on the way.
+                </p>
+              </div>
+            ) : (
+              <div className="relative h-[520px] w-full overflow-hidden sm:h-[420px]">
+                {projects.map((p, i) => (
+                  <ProjectSlide
+                    key={p.id}
+                    project={p}
+                    index={i}
+                    total={total}
+                    progress={scrollYProgress}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react';
 import { loadSiteContent } from '@/lib/content';
+import { supabaseConfigured } from '@/lib/supabase';
 import type {
   AboutPillarItem,
   AboutStatItem,
@@ -82,12 +83,16 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const c = content as Partial<ReturnType<typeof loadSiteContent>> & {
       [key: string]: unknown;
     };
+    const fallbackProjects = !ready && supabaseConfigured ? [] : DEFAULT_PROJECTS;
+    const fallbackTestimonials =
+      !ready && supabaseConfigured ? [] : DEFAULT_TESTIMONIALS;
     return {
       techs: (c.techs as TechItem[] | null) ?? DEFAULT_TECHS,
       skills: (c.skills as SkillRow[] | null) ?? DEFAULT_SKILLS,
-      projects: (c.projects as ProjectItem[] | null) ?? DEFAULT_PROJECTS,
+      projects: (c.projects as ProjectItem[] | null) ?? fallbackProjects,
       experience: (c.experience as ExperienceItem[] | null) ?? DEFAULT_EXPERIENCE,
-      testimonials: (c.testimonials as TestimonialItem[] | null) ?? DEFAULT_TESTIMONIALS,
+      testimonials:
+        (c.testimonials as TestimonialItem[] | null) ?? fallbackTestimonials,
       githubRepos: (c.githubRepos as GithubRepoItem[] | null) ?? DEFAULT_GITHUB_REPOS,
       aboutStats: (c.aboutStats as AboutStatItem[] | null) ?? DEFAULT_ABOUT_STATS,
       aboutPillars: (c.aboutPillars as AboutPillarItem[] | null) ?? DEFAULT_ABOUT_PILLARS,

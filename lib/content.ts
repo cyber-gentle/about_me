@@ -17,12 +17,12 @@ import type {
 
 /**
  * Fetches a table ordered for display. Returns null when Supabase is not
- * configured, the query fails, or the table is empty so callers can fall
- * back to defaults.
+ * configured, the query fails, or (unless allowEmpty is set) the table is
+ * empty so callers can fall back to defaults.
  */
 async function fetchTable<T>(
   table: string,
-  approvedOnly = false
+  options: { approvedOnly?: boolean; allowEmpty?: boolean } = {}
 ): Promise<T[] | null> {
   if (!supabaseConfigured) return null;
   try {
@@ -31,11 +31,12 @@ async function fetchTable<T>(
       .select('*')
       .order('sort_order', { ascending: true })
       .order('created_at', { ascending: true });
-    if (approvedOnly) {
+    if (options.approvedOnly) {
       query = query.eq('approved', true);
     }
     const { data, error } = await query;
-    if (error || !data || data.length === 0) return null;
+    if (error || !data) return null;
+    if (data.length === 0 && !options.allowEmpty) return null;
     return data as T[];
   } catch {
     return null;
@@ -92,9 +93,9 @@ export async function loadSiteContent(): Promise<SiteContent> {
   ] = await Promise.all([
     fetchTable<TechItem>('tech_stack'),
     fetchTable<SkillRow>('skills'),
-    fetchTable<ProjectItem>('projects'),
+    fetchTable<ProjectItem>('projects', { allowEmpty: true }),
     fetchTable<ExperienceItem>('experience'),
-    fetchTable<TestimonialItem>('testimonials', true),
+    fetchTable<TestimonialItem>('testimonials', { approvedOnly: true, allowEmpty: true }),
     fetchTable<GithubRepoItem>('github_repos'),
     fetchTable<AboutStatItem>('about_stats'),
     fetchTable<AboutPillarItem>('about_pillars'),

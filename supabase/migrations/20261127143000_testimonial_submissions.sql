@@ -17,6 +17,8 @@ begin
   end if;
 end $$;
 
+grant select, insert on public.testimonials to anon, authenticated;
+
 drop policy if exists "public_read" on public.testimonials;
 create policy "public_read" on public.testimonials for select
   to anon, authenticated using (approved or is_admin());
