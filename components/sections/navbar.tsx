@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { LiveClock } from '@/components/live-clock';
 import { cn } from '@/lib/utils';
@@ -16,12 +16,25 @@ const links = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('#home');
+  const lastY = useRef(0);
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 24);
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      // Hide when scrolling up, reveal when scrolling down. Always visible
+      // near the top of the page so the hero entry point stays reachable.
+      if (y < 80) {
+        setHidden(false);
+      } else if (y < lastY.current - 4) {
+        setHidden(true);
+      } else if (y > lastY.current + 4) {
+        setHidden(false);
+      }
+      lastY.current = y;
       const sections = links.map((l) => l.href.slice(1));
       for (const id of sections) {
         const el = document.getElementById(id);
@@ -45,7 +58,14 @@ export function Navbar() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-3 z-[9990] px-4">
+    <header
+      className={cn(
+        'fixed inset-x-0 top-3 z-[9990] px-4 transition-all duration-300 ease-out',
+        hidden && !open
+          ? '-translate-y-[130%] opacity-0'
+          : 'translate-y-0 opacity-100'
+      )}
+    >
       <div
         className={cn(
           'mx-auto flex h-14 max-w-[1160px] items-center justify-between rounded-2xl px-4 sm:px-5 transition-all duration-300',
