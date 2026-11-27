@@ -34,11 +34,11 @@ const COMMANDS = [
 ] as const;
 
 const toneClass: Record<Tone, string> = {
-  keyword: 'text-[#7FE7FF]',
-  accent: 'text-[#c4b5ff]',
-  string: 'text-white/90',
-  muted: 'text-white/50',
-  success: 'text-emerald-300',
+  keyword: 'text-[#7FE7FF] font-medium',
+  accent: 'text-[#c4b5ff] font-medium',
+  string: 'text-white',
+  muted: 'text-white/70',
+  success: 'text-emerald-300 font-medium',
 };
 
 export function TerminalShell() {
@@ -295,12 +295,12 @@ export function TerminalShell() {
       <div
         ref={scrollRef}
         onClick={() => introDone && inputRef.current?.focus()}
-        className="h-[300px] cursor-text space-y-1.5 overflow-y-auto px-4 py-4 font-mono text-[11px] leading-5 sm:h-[320px] sm:text-xs"
+        className="h-[320px] cursor-text space-y-1.5 overflow-y-auto px-4 py-4 font-mono text-xs font-medium leading-[22px] sm:h-[360px] sm:text-[13px] sm:leading-[24px]"
       >
         {/* Intro: the python file, typed once */}
         {rendered.map(({ text, visible }, idx) =>
           visible === 0 ? null : (
-            <div key={`intro-${idx}`} className="whitespace-pre text-white/60">
+            <div key={`intro-${idx}`} className="whitespace-pre text-white/85">
               <span>{text.slice(0, visible)}</span>
               {!introDone && visible < text.length && (
                 <span className="ml-0.5 inline-block h-3.5 w-2 translate-y-0.5 animate-pulse bg-[#7FE7FF]" />
@@ -337,9 +337,9 @@ export function TerminalShell() {
         {introDone && (
           <div className="flex items-baseline whitespace-pre">
             <span className="text-[#7FE7FF]">
-              guest@abdavid<span className="text-white/40">:~$</span>
+              guest@abdavid<span className="text-white/60">:~$</span>
             </span>
-            <span className="relative ml-2 flex-1 text-white/90">
+            <span className="relative ml-2 flex-1 text-white">
               {input}
               <span className="ml-0.5 inline-block h-3.5 w-2 translate-y-0.5 animate-pulse bg-[#7FE7FF]" />
               <input
@@ -352,7 +352,7 @@ export function TerminalShell() {
                 autoComplete="off"
                 autoCapitalize="off"
                 aria-label="Terminal command input"
-                className="absolute inset-0 h-full w-full cursor-text bg-transparent p-0 font-mono text-[11px] text-transparent caret-transparent outline-none sm:text-xs"
+                className="absolute inset-0 h-full w-full cursor-text bg-transparent p-0 font-mono text-xs font-medium text-transparent caret-transparent outline-none sm:text-[13px]"
               />
             </span>
           </div>
@@ -367,7 +367,7 @@ export function TerminalShell() {
             onClick={() => runChip(c)}
             disabled={busy || !introDone}
             data-cursor="hover"
-            className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 font-mono text-[10px] text-white/60 transition-all duration-150 hover:border-[#7FE7FF]/40 hover:text-[#7FE7FF] disabled:opacity-40 sm:text-[11px]"
+            className="rounded-lg border border-white/15 bg-white/[0.06] px-3 py-1.5 font-mono text-[11px] font-medium text-white/80 transition-all duration-150 hover:border-[#7FE7FF]/50 hover:text-[#7FE7FF] disabled:opacity-40 sm:text-xs"
           >
             {c}
           </button>

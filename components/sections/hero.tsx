@@ -68,16 +68,16 @@ export function Hero() {
               aria-hidden="true"
             />
 
-            <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.05] backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.18)]">
+            <div className="relative overflow-hidden rounded-2xl border border-white/25 bg-white/[0.08] backdrop-blur-2xl shadow-[0_24px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(79,139,255,0.18),inset_0_1px_0_rgba(255,255,255,0.22)]">
               {/* macOS window title bar */}
-              <div className="flex items-center gap-3 border-b border-white/10 bg-white/[0.04] px-4 py-2.5">
+              <div className="flex items-center gap-3 border-b border-white/15 bg-white/[0.06] px-4 py-2.5">
                 <div className="flex items-center gap-1.5" aria-hidden="true">
                   <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F56]" />
                   <span className="h-2.5 w-2.5 rounded-full bg-[#FFBD2E]" />
                   <span className="h-2.5 w-2.5 rounded-full bg-[#27C93F]" />
                 </div>
-                <div className="flex items-center gap-1.5 font-mono text-xs text-white/60">
-                  <Terminal size={12} className="text-[#7FE7FF]" />
+                <div className="flex items-center gap-1.5 font-mono text-xs font-medium text-white/85">
+                  <Terminal size={13} className="text-[#7FE7FF]" />
                   <span>guest@abdavid — zsh</span>
                 </div>
               </div>
