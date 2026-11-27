@@ -25,14 +25,15 @@ export function Navbar() {
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 24);
-      // Hide when scrolling up, reveal when scrolling down. Always visible
-      // near the top of the page so the hero entry point stays reachable.
+      // Hide when scrolling down, slide back in on any upward scroll.
+      // Always visible near the top of the page so the hero entry point
+      // stays reachable.
       if (y < 80) {
         setHidden(false);
-      } else if (y < lastY.current - 4) {
-        setHidden(true);
-      } else if (y > lastY.current + 4) {
+      } else if (y < lastY.current) {
         setHidden(false);
+      } else if (y > lastY.current + 4) {
+        setHidden(true);
       }
       lastY.current = y;
       const sections = links.map((l) => l.href.slice(1));
