@@ -22,34 +22,47 @@ export function Navbar() {
   const lastY = useRef(0);
 
   useEffect(() => {
+    // Cache section elements once; avoids per-event DOM queries.
+    const sections = links
+      .map((l) => document.getElementById(l.href.slice(1)))
+      .filter((el): el is HTMLElement => el !== null);
+
+    // One handler run per animation frame: scroll fires at frame rate and
+    // the rect reads below force layout while the 3D canvas animates, so
+    // running them on every raw event causes visible jank.
+    let raf = 0;
     const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 24);
-      // Hide when scrolling down, slide back in on any upward scroll.
-      // Always visible near the top of the page so the hero entry point
-      // stays reachable.
-      if (y < 80) {
-        setHidden(false);
-      } else if (y < lastY.current) {
-        setHidden(false);
-      } else if (y > lastY.current + 4) {
-        setHidden(true);
-      }
-      lastY.current = y;
-      const sections = links.map((l) => l.href.slice(1));
-      for (const id of sections) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= 120 && rect.bottom >= 120) {
-          setActive('#' + id);
-          break;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const y = window.scrollY;
+        setScrolled(y > 24);
+        // Hide when scrolling down, slide back in on any upward scroll.
+        // Always visible near the top of the page so the hero entry point
+        // stays reachable.
+        if (y < 80) {
+          setHidden(false);
+        } else if (y < lastY.current) {
+          setHidden(false);
+        } else if (y > lastY.current + 4) {
+          setHidden(true);
         }
-      }
+        lastY.current = y;
+        for (const el of sections) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 120 && rect.bottom >= 120) {
+            setActive('#' + el.id);
+            break;
+          }
+        }
+      });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   const go = (href: string) => {
@@ -61,7 +74,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'fixed inset-x-0 top-3 z-[9990] px-4 transition-all duration-300 ease-out',
+        'fixed inset-x-0 top-3 z-[9990] px-4 transition-[transform,opacity] duration-200 ease-out',
         hidden && !open
           ? '-translate-y-[130%] opacity-0'
           : 'translate-y-0 opacity-100'
