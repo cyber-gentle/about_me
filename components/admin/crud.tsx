@@ -244,6 +244,7 @@ export function ItemCard({
   onDown,
   onEdit,
   onDelete,
+  extraActions,
   children,
 }: {
   title: string;
@@ -255,6 +256,7 @@ export function ItemCard({
   onDown: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  extraActions?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   return (
@@ -277,6 +279,7 @@ export function ItemCard({
           {children}
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          {extraActions}
           <button
             title="Move up"
             disabled={busy || index === 0}

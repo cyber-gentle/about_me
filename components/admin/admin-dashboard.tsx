@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Inbox,
@@ -51,8 +51,25 @@ export function AdminDashboard({ email }: { email: string }) {
   const [tab, setTab] = useState<TabId>('messages');
   const [signingOut, setSigningOut] = useState(false);
   const [seeding, setSeeding] = useState(false);
+  const [seedClicks, setSeedClicks] = useState(0);
   const [seedNote, setSeedNote] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    if (seedClicks === 0) return;
+    const timer = setTimeout(() => setSeedClicks(0), 5000);
+    return () => clearTimeout(timer);
+  }, [seedClicks]);
+
+  const handleSeedClick = () => {
+    if (seeding) return;
+    if (seedClicks < 2) {
+      setSeedClicks((c) => c + 1);
+      return;
+    }
+    setSeedClicks(0);
+    void handleSeed();
+  };
 
   const handleSeed = async () => {
     setSeeding(true);
@@ -103,16 +120,24 @@ export function AdminDashboard({ email }: { email: string }) {
           </div>
           <div className="ml-auto flex items-center gap-2">
             <button
-              onClick={handleSeed}
+              onClick={handleSeedClick}
               disabled={seeding}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[#4F8BFF]/40 bg-[#4F8BFF]/15 px-3 py-2 text-xs font-medium text-[#7FE7FF] transition-all hover:bg-[#4F8BFF]/25 disabled:opacity-50"
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-all disabled:opacity-50 ${
+                seedClicks > 0
+                  ? 'border-amber-400/50 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
+                  : 'border-[#4F8BFF]/40 bg-[#4F8BFF]/15 text-[#7FE7FF] hover:bg-[#4F8BFF]/25'
+              }`}
             >
               {seeding ? (
                 <Loader2 size={12} className="animate-spin" />
               ) : (
                 <DatabaseBackup size={12} />
               )}
-              {seeding ? 'Seeding...' : 'Seed defaults'}
+              {seeding
+                ? 'Seeding...'
+                : seedClicks === 0
+                  ? 'Seed defaults'
+                  : `Confirm seed (${3 - seedClicks} left)`}
             </button>
             <a
               href="/"

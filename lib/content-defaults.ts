@@ -188,6 +188,7 @@ export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
       'Abraham is the kind of engineer every team wants. He shipped our API gateway in record time and it has been rock solid ever since. His attention to performance and clean architecture is unmatched.',
     name: 'Sarah Chen',
     role: 'VP Engineering, Nebula Cloud',
+    approved: true,
     sort_order: 0,
   },
   {
@@ -196,6 +197,7 @@ export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
       'Working with Abraham was a turning point for our platform. He redesigned our event pipeline to handle 10x the load without breaking a sweat. A true systems thinker.',
     name: 'Marcus Reid',
     role: 'CTO, Quantum Labs',
+    approved: true,
     sort_order: 1,
   },
   {
@@ -204,6 +206,7 @@ export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
       'Rarely do you find an engineer who cares as deeply about developer experience as Abraham does. The tooling he built saved our team hours every single week.',
     name: 'Priya Nair',
     role: 'Staff Engineer, ByteForge',
+    approved: true,
     sort_order: 2,
   },
   {
@@ -212,6 +215,7 @@ export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
       'Abraham mentored me through my first production Go service. Patient, precise, and genuinely invested in helping others level up. A phenomenal engineer and teammate.',
     name: 'David Park',
     role: 'Backend Engineer, Nebula Cloud',
+    approved: true,
     sort_order: 3,
   },
 ];

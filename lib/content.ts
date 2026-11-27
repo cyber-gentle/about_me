@@ -20,14 +20,21 @@ import type {
  * configured, the query fails, or the table is empty so callers can fall
  * back to defaults.
  */
-async function fetchTable<T>(table: string): Promise<T[] | null> {
+async function fetchTable<T>(
+  table: string,
+  approvedOnly = false
+): Promise<T[] | null> {
   if (!supabaseConfigured) return null;
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from(table)
       .select('*')
       .order('sort_order', { ascending: true })
       .order('created_at', { ascending: true });
+    if (approvedOnly) {
+      query = query.eq('approved', true);
+    }
+    const { data, error } = await query;
     if (error || !data || data.length === 0) return null;
     return data as T[];
   } catch {
@@ -87,7 +94,7 @@ export async function loadSiteContent(): Promise<SiteContent> {
     fetchTable<SkillRow>('skills'),
     fetchTable<ProjectItem>('projects'),
     fetchTable<ExperienceItem>('experience'),
-    fetchTable<TestimonialItem>('testimonials'),
+    fetchTable<TestimonialItem>('testimonials', true),
     fetchTable<GithubRepoItem>('github_repos'),
     fetchTable<AboutStatItem>('about_stats'),
     fetchTable<AboutPillarItem>('about_pillars'),

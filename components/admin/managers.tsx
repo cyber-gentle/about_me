@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2, MapPin } from 'lucide-react';
+import { Check, EyeOff, Loader2, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useContent } from '@/components/providers/content-provider';
 import type {
   AboutPillarItem,
   AboutStatItem,
@@ -162,9 +163,22 @@ const TESTIMONIAL_FIELDS: FieldDef[] = [
   { key: 'quote', label: 'Quote', type: 'textarea', rows: 4, required: true },
   { key: 'name', label: 'Name', required: true, half: true, placeholder: 'Sarah Chen' },
   { key: 'role', label: 'Role / Company', half: true, placeholder: 'VP Engineering, Nebula Cloud' },
+  {
+    key: 'approved',
+    label: 'Visibility',
+    type: 'select',
+    default: 'true',
+    options: [
+      { value: 'true', label: 'Approved (visible on site)' },
+      { value: 'false', label: 'Pending approval' },
+    ],
+    parse: (v) => v === 'true',
+  },
 ];
 
 export function TestimonialsManager() {
+  const { reload } = useContent();
+
   return (
     <ListManager<TestimonialItem>
       table="testimonials"
@@ -172,6 +186,51 @@ export function TestimonialsManager() {
       fields={TESTIMONIAL_FIELDS}
       titleOf={(r) => r.name}
       subtitleOf={(r) => r.role}
+      headerExtra={(rows) => {
+        const pending = rows.filter((r) => !r.approved).length;
+        if (pending === 0) return null;
+        return (
+          <span className="rounded-full border border-amber-400/40 bg-amber-500/15 px-2.5 py-0.5 font-mono text-[10px] font-medium text-amber-200">
+            {pending} pending approval
+          </span>
+        );
+      }}
+      detail={(r) => (
+        <div className="mt-2 space-y-2">
+          <p className="line-clamp-2 text-xs leading-relaxed text-white/60">
+            &ldquo;{r.quote}&rdquo;
+          </p>
+          <span
+            className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] ${
+              r.approved
+                ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
+                : 'border-amber-400/40 bg-amber-500/15 text-amber-200'
+            }`}
+          >
+            {r.approved ? 'Approved' : 'Pending approval'}
+          </span>
+        </div>
+      )}
+      itemActions={(r, { update, busy }) => (
+        <button
+          type="button"
+          title={r.approved ? 'Hide from site' : 'Approve and publish'}
+          disabled={busy}
+          onClick={async () => {
+            if (await update(r.id, { approved: !r.approved })) {
+              await reload();
+            }
+          }}
+          className={`flex h-7 items-center gap-1 rounded-md border px-2 text-[11px] font-medium transition-all disabled:opacity-30 ${
+            r.approved
+              ? 'border-white/10 bg-white/5 text-white/60 hover:border-amber-400/40 hover:text-amber-200'
+              : 'border-emerald-400/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25'
+          }`}
+        >
+          {r.approved ? <EyeOff size={11} /> : <Check size={11} />}
+          {r.approved ? 'Hide' : 'Approve'}
+        </button>
+      )}
     />
   );
 }

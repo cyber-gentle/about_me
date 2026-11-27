@@ -40,6 +40,7 @@ export type TestimonialItem = {
   quote: string;
   name: string;
   role: string;
+  approved: boolean;
   sort_order: number;
 };
 

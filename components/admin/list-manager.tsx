@@ -70,6 +70,8 @@ export function ListManager<T extends CrudRow>({
   titleOf,
   subtitleOf,
   detail,
+  headerExtra,
+  itemActions,
 }: {
   table: string;
   what: string;
@@ -77,6 +79,14 @@ export function ListManager<T extends CrudRow>({
   titleOf: (row: T) => string;
   subtitleOf?: (row: T) => string;
   detail?: (row: T) => React.ReactNode;
+  headerExtra?: (rows: T[]) => React.ReactNode;
+  itemActions?: (
+    row: T,
+    helpers: {
+      update: (id: string, values: Record<string, unknown>) => Promise<boolean>;
+      busy: boolean;
+    }
+  ) => React.ReactNode;
 }) {
   const crud = useCrud<T>(table);
   const [adding, setAdding] = useState(false);
@@ -179,7 +189,10 @@ export function ListManager<T extends CrudRow>({
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="font-display text-lg font-semibold">{what}</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="font-display text-lg font-semibold">{what}</h2>
+            {headerExtra?.(crud.rows)}
+          </div>
           <p className="text-xs text-white/40">
             {crud.rows.length} entr{crud.rows.length === 1 ? 'y' : 'ies'} in the
             database. Use arrows to arrange.
@@ -237,6 +250,15 @@ export function ListManager<T extends CrudRow>({
                 onDown={() => crud.move(i, 1)}
                 onEdit={() => openEdit(row)}
                 onDelete={() => setConfirmId(row.id)}
+                extraActions={itemActions?.(row, {
+                  update: async (id, values) => {
+                    setBusy(true);
+                    const ok = await crud.update(id, values);
+                    setBusy(false);
+                    return ok;
+                  },
+                  busy,
+                })}
               >
                 {detail?.(row)}
               </ItemCard>
