@@ -1,45 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { ArrowRight, Mail, Sparkles, Terminal } from 'lucide-react';
-
-const pythonLines = [
-  { text: 'class Me:', tone: 'keyword' },
-  { text: '    def __init__(self):', tone: 'keyword' },
-  { text: "        self.name = 'Abraham David'", tone: 'string' },
-  { text: "        self.role = 'Backend Developer & Software Engineer'", tone: 'string' },
-  { text: "        self.primary_stack = ['Go', 'Python', 'TypeScript', 'PostgreSQL', 'Redis']", tone: 'string' },
-  { text: "        self.focus = 'Distributed APIs & cloud systems'", tone: 'string' },
-  { text: "        self.availability = 'Open for remote roles & consulting'", tone: 'string' },
-  { text: "        self.location = 'Remote / Worldwide'", tone: 'string' },
-];
+import { TerminalShell } from '@/components/sections/terminal-shell';
 
 export function Hero() {
-  const [typed, setTyped] = useState(0);
-  const totalChars = pythonLines.reduce((n, line) => n + line.text.length, 0);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      // Type one character per tick; the +24 tail adds a brief pause before looping.
-      setTyped((prev) => (prev >= totalChars + 24 ? 0 : prev + 1));
-    }, 26);
-    return () => clearInterval(id);
-  }, [totalChars]);
-
-  // Distribute the typed character count across lines
-  let consumed = 0;
-  const rendered = pythonLines.map((line) => {
-    const start = consumed;
-    consumed += line.text.length;
-    const visible = Math.max(0, Math.min(line.text.length, typed - start));
-    return { ...line, visibleText: line.text.slice(0, visible) };
-  });
-
-  const lastVisibleIdx = rendered.reduce(
-    (last, line, idx) => (line.visibleText.length > 0 ? idx : last),
-    -1
-  );
-
   const scrollTo = (href: string) => {
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -114,41 +78,11 @@ export function Hero() {
                 </div>
                 <div className="flex items-center gap-1.5 font-mono text-xs text-white/60">
                   <Terminal size={12} className="text-[#7FE7FF]" />
-                  <span>about_me.py</span>
+                  <span>guest@abdavid — zsh</span>
                 </div>
               </div>
 
-              <div className="min-h-[220px] space-y-1.5 overflow-x-auto px-4 py-4 font-mono text-[11px] leading-5 sm:text-xs">
-                {typed === 0 && (
-                  <div>
-                    <span className="inline-block h-3.5 w-2 animate-pulse bg-[#7FE7FF]" />
-                  </div>
-                )}
-                {rendered.map((line, idx) => {
-                  if (line.visibleText.length === 0) return null;
-                  const isActive = idx === lastVisibleIdx;
-                  return (
-                    <div key={idx} className="whitespace-pre">
-                      <span
-                        className={
-                          line.tone === 'keyword'
-                            ? 'text-[#7FE7FF]'
-                            : line.tone === 'accent'
-                              ? 'text-[#c4b5ff]'
-                              : line.tone === 'string'
-                                ? 'text-white/90'
-                                : 'text-white/60'
-                        }
-                      >
-                        {line.visibleText || ' '}
-                      </span>
-                      {isActive && (
-                        <span className="ml-0.5 inline-block h-3.5 w-2 translate-y-0.5 animate-pulse bg-[#7FE7FF]" />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+              <TerminalShell />
             </div>
           </div>
         </div>
