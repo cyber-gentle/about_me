@@ -15,16 +15,30 @@ const pythonLines = [
 ];
 
 export function Hero() {
-  const [visibleLines, setVisibleLines] = useState(0);
+  const [typed, setTyped] = useState(0);
+  const totalChars = pythonLines.reduce((n, line) => n + line.text.length, 0);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setVisibleLines((prev) =>
-        prev >= pythonLines.length + 3 ? 0 : prev + 1
-      );
-    }, 420);
+      // Type one character per tick; the +24 tail adds a brief pause before looping.
+      setTyped((prev) => (prev >= totalChars + 24 ? 0 : prev + 1));
+    }, 26);
     return () => clearInterval(id);
-  }, []);
+  }, [totalChars]);
+
+  // Distribute the typed character count across lines
+  let consumed = 0;
+  const rendered = pythonLines.map((line) => {
+    const start = consumed;
+    consumed += line.text.length;
+    const visible = Math.max(0, Math.min(line.text.length, typed - start));
+    return { ...line, visibleText: line.text.slice(0, visible) };
+  });
+
+  const lastVisibleIdx = rendered.reduce(
+    (last, line, idx) => (line.visibleText.length > 0 ? idx : last),
+    -1
+  );
 
   const scrollTo = (href: string) => {
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
@@ -105,8 +119,14 @@ export function Hero() {
               </div>
 
               <div className="min-h-[220px] space-y-1.5 overflow-x-auto px-4 py-4 font-mono text-[11px] leading-5 sm:text-xs">
-                {pythonLines.slice(0, visibleLines).map((line, idx, arr) => {
-                  const isLast = idx === arr.length - 1;
+                {typed === 0 && (
+                  <div>
+                    <span className="inline-block h-3.5 w-2 animate-pulse bg-[#7FE7FF]" />
+                  </div>
+                )}
+                {rendered.map((line, idx) => {
+                  if (line.visibleText.length === 0) return null;
+                  const isActive = idx === lastVisibleIdx;
                   return (
                     <div key={idx} className="whitespace-pre">
                       <span
@@ -120,19 +140,14 @@ export function Hero() {
                                 : 'text-white/60'
                         }
                       >
-                        {line.text || ' '}
+                        {line.visibleText || ' '}
                       </span>
-                      {isLast && (
+                      {isActive && (
                         <span className="ml-0.5 inline-block h-3.5 w-2 translate-y-0.5 animate-pulse bg-[#7FE7FF]" />
                       )}
                     </div>
                   );
                 })}
-                {visibleLines === 0 && (
-                  <div>
-                    <span className="inline-block h-3.5 w-2 animate-pulse bg-[#7FE7FF]" />
-                  </div>
-                )}
               </div>
             </div>
           </div>

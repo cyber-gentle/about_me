@@ -56,9 +56,9 @@ function FloatingInput({
   };
 
   return (
-    <div className="relative">
+    <div className={textarea ? 'relative flex flex-1 flex-col' : 'relative'}>
       {textarea ? (
-        <textarea {...shared} rows={4} />
+        <textarea {...shared} rows={4} className={`${shared.className} h-full min-h-[140px] resize-none`} />
       ) : (
         <input {...shared} type={type} />
       )}
@@ -66,7 +66,9 @@ function FloatingInput({
         htmlFor={id}
         className={`pointer-events-none absolute left-4 transition-all ${active
           ? 'top-2 text-[10px] font-medium text-[#7FE7FF]'
-          : 'top-1/2 -translate-y-1/2 text-sm text-white/40'
+          : textarea
+            ? 'top-6 text-sm text-white/40'
+            : 'top-1/2 -translate-y-1/2 text-sm text-white/40'
           }`}
       >
         {label}
@@ -151,7 +153,7 @@ export function Contact() {
               ))}
 
               {/* Location */}
-              <div className="flex items-center gap-4 rounded-2xl glass-card p-4">
+              <div className="mt-auto flex items-center gap-4 rounded-2xl glass-card p-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-[#4F8BFF]/20 to-[#8A5CFF]/10">
                   <MapPin size={20} className="text-[#7FE7FF]" />
                 </div>
@@ -166,10 +168,10 @@ export function Contact() {
           </Reveal>
 
           {/* Form */}
-          <Reveal delay={0.1}>
+          <Reveal delay={0.1} className="h-full">
             <form
               onSubmit={handleSubmit}
-              className="relative overflow-hidden rounded-3xl glass-card p-6 sm:p-8"
+              className="relative h-full overflow-hidden rounded-3xl glass-card p-6 sm:p-8"
             >
               {/* Glow accent */}
               <div
@@ -180,7 +182,7 @@ export function Contact() {
                 }}
               />
 
-              <div className="relative flex flex-col gap-4">
+              <div className="relative flex h-full flex-col gap-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <FloatingInput
                     id="name"
@@ -198,7 +200,7 @@ export function Contact() {
                 </div>
                 <FloatingInput
                   id="message"
-                  label="Your Message"
+                  label="Message"
                   value={form.message}
                   onChange={(v) => setForm((f) => ({ ...f, message: v }))}
                   textarea
